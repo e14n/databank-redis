@@ -1,9 +1,13 @@
-This package is an abstraction tool for NoSQL databanks in Node.js.
+This package is an abstraction tool for NoSQL databases in Node.js.
 
 At development time, I don't really know or care which server I'm
 using; I'm just making JSON objects and CRUD'ing them. I figure if I
 stick to this simple interface, I won't get in trouble when I move
 between servers.
+
+I chose the name "databank" since it's not in widespread use and won't
+cause name conflicts, and because it sounds like something a 1960s
+robot would say.
 
 License
 -------
@@ -43,6 +47,9 @@ is pretty remedial.
 So, you actually have to code your implementation decision in when
 constructing a bank object. Probably that could be corrected in the
 future to be more data-driven.
+
+Databank
+========
 
 The databank interface has these methods:
 
@@ -151,3 +158,31 @@ The databank interface has these methods:
 			}
                     });
     }
+
+DatabankError
+=============
+
+This is a subclass of `Error` for stuff that went wrong with a
+`Databank`. Subclasses include:
+
+* `NotImplementedError`
+  
+  That doesn't work.
+
+* `NoSuchThingError`
+
+  The type/id pair you were trying to read/update/delete doesn't exist.
+
+* `AlreadyExistsError`
+
+  The type/id pair you were trying to create *does* exist.
+
+TODO
+----
+
+* MongoDB driver
+* Riak driver
+* LevelDB driver
+* Cassandra driver
+* CouchDB driver
+* Factory interface
