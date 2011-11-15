@@ -91,6 +91,25 @@ Databank.prototype = {
 	}
     },
 
+    // Update an existing thing
+    // type: the type of thing; 'user', 'activity'
+    // id: a unique ID -- nickname or UUID or URI
+    // value: the new value of the thing
+    // onCompletion(err, value): function to call on completion
+
+    save: function(type, id, value, onCompletion)
+    {
+	this.update(type, id, value, function(err, result) {
+	    if (err instanceof NoSuchThingError) {
+		this.create(type, id, value, function(err, result) {
+		    onCompletion(err, result);
+		});
+	    } else {
+		onCompletion(err, result);
+	    }
+	});
+    },
+
     // Delete an existing thing
     // type: the type of thing; 'user', 'activity'
     // id: a unique ID -- nickname or UUID or URI
