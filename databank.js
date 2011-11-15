@@ -1,4 +1,4 @@
-// jsonstore.js
+// databank.js
 //
 // abstraction for storing JSON data in some kinda storage
 //
@@ -20,17 +20,17 @@
 // now, so I'm just going to declare the interface I need and try a few
 // different systems to implement it.
 
-// A custom error for JSONStore schtuff.
+// A custom error for Databank schtuff.
 
 
 // A thing that stores JSON.
 // Basically CRUD + Search. Recognizes types of data without
 // enforcing a schema.
 
-function JSONStore() {
+function Databank() {
 }
 
-JSONStore.prototype = {
+Databank.prototype = {
 
     // Connect yourself on up.
     // params: object containing any params you need
@@ -118,14 +118,14 @@ JSONStore.prototype = {
     }
 };
 
-function JSONStoreError(message) {
+function DatabankError(message) {
     if (message) {
 	this.message = message;
     }
 }
 
-JSONStoreError.prototype = new Error();
-JSONStoreError.prototype.constructor = JSONStoreError;
+DatabankError.prototype = new Error();
+DatabankError.prototype.constructor = DatabankError;
 
 function NoSuchThingError(type, id) {
     this.type = type;
@@ -133,7 +133,7 @@ function NoSuchThingError(type, id) {
     this.message = "No such '" + type + "' with id '" + id + "'";
 }
 
-NoSuchThingError.prototype = new JSONStoreError();
+NoSuchThingError.prototype = new DatabankError();
 NoSuchThingError.prototype.constructor = NoSuchThingError;
 
 function AlreadyExistsError(type, id) {
@@ -142,18 +142,18 @@ function AlreadyExistsError(type, id) {
     this.message = "Already have a(n) '" + type + "' with id '" + id + "'";
 }
 
-AlreadyExistsError.prototype = new JSONStoreError();
+AlreadyExistsError.prototype = new DatabankError();
 AlreadyExistsError.prototype.constructor = AlreadyExistsError;
 
 function NotImplementedError() {
     this.message = "Method not yet implemented.";
 }
 
-NotImplementedError.prototype = new JSONStoreError();
+NotImplementedError.prototype = new DatabankError();
 NotImplementedError.prototype.constructor = NotImplementedError;
 
-exports.JSONStore = JSONStore;
-exports.JSONStoreError = JSONStoreError;
+exports.Databank = Databank;
+exports.DatabankError = DatabankError;
 exports.NotImplementedError = NotImplementedError;
 exports.NoSuchThingError = NoSuchThingError;
 exports.AlreadyExistsError = AlreadyExistsError;

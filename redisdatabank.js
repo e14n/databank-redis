@@ -1,6 +1,6 @@
-// redisjsonstore.js
+// redisdatabank.js
 //
-// implementation of JSONStore interface using redis
+// implementation of Databank interface using redis
 //
 // Copyright 2011, StatusNet Inc.
 //
@@ -16,29 +16,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var jsonstore = require('./jsonstore');
+var databank = require('./databank');
 var redis = require('redis');
 
-var JSONStore = jsonstore.JSONStore;
-var JSONStoreError = jsonstore.JSONStoreError;
-var AlreadyExistsError = jsonstore.AlreadyExistsError;
-var NoSuchThingError = jsonstore.NoSuchThingError;
+var Databank = databank.Databank;
+var DatabankError = databank.DatabankError;
+var AlreadyExistsError = databank.AlreadyExistsError;
+var NoSuchThingError = databank.NoSuchThingError;
 
-function RedisJSONStore() {
+function RedisDatabank() {
     this.client = null;
 }
 
-RedisJSONStore.prototype = new JSONStore();
+RedisDatabank.prototype = new Databank();
 
-RedisJSONStore.prototype.toKey = function(type, id) {
+RedisDatabank.prototype.toKey = function(type, id) {
     return type + ':' + id;
 }
 
-RedisJSONStore.prototype.connect = function(params, onCompletion) {
+RedisDatabank.prototype.connect = function(params, onCompletion) {
     this.client = redis.createClient();
     this.client.on('error', function(err) {
 	if (onCompletion) {
-	    onCompletion(new JSONStoreError(err));
+	    onCompletion(new DatabankError(err));
 	}
     })
     this.client.on('connect', function() {
@@ -48,20 +48,20 @@ RedisJSONStore.prototype.connect = function(params, onCompletion) {
     })
 };
 
-RedisJSONStore.prototype.disconnect = function(onCompletion) {
+RedisDatabank.prototype.disconnect = function(onCompletion) {
     this.client.quit(function(err) {
 	if (err) {
-	    onCompletion(new JSONStoreError());
+	    onCompletion(new DatabankError());
 	} else {
 	    onCompletion(null);
 	}
     });
 };
 
-RedisJSONStore.prototype.create = function(type, id, value, onCompletion) {
+RedisDatabank.prototype.create = function(type, id, value, onCompletion) {
     this.client.setnx(this.toKey(type, id), JSON.stringify(value), function(err, result) {
 	if (err) {
-	    onCompletion(new JSONStoreError(err));
+	    onCompletion(new DatabankError(err));
 	} else if (result == 0) {
 	    onCompletion(new AlreadyExistsError(type, id));
 	} else {
@@ -70,10 +70,10 @@ RedisJSONStore.prototype.create = function(type, id, value, onCompletion) {
     });
 };
 
-RedisJSONStore.prototype.read = function(type, id, onCompletion) {
+RedisDatabank.prototype.read = function(type, id, onCompletion) {
     this.client.get(this.toKey(type, id), function(err, value) {
 	if (err) {
-	    onCompletion(new JSONStoreError(err), null);
+	    onCompletion(new DatabankError(err), null);
 	} else if (value == null) {
 	    onCompletion(new NoSuchThingError(type, id), null);
 	} else {
@@ -82,20 +82,20 @@ RedisJSONStore.prototype.read = function(type, id, onCompletion) {
     });
 };
 
-RedisJSONStore.prototype.update = function(type, id, value, onCompletion) {
+RedisDatabank.prototype.update = function(type, id, value, onCompletion) {
     this.client.set(this.toKey(type, id), JSON.stringify(value), function(err) {
 	if (err) {
-	    onCompletion(new JSONStoreError(err), null);
+	    onCompletion(new DatabankError(err), null);
 	} else {
 	    onCompletion(null, value);
 	}
     });
 };
 
-RedisJSONStore.prototype.del = function(type, id, onCompletion) {
+RedisDatabank.prototype.del = function(type, id, onCompletion) {
     this.client.del(this.toKey(type, id), function(err, count) {
 	if (err) {
-	    onCompletion(new JSONStoreError(err));
+	    onCompletion(new DatabankError(err));
 	} else if (count == 0) {
 	    onCompletion(new NoSuchThingError(type, id));
 	} else {
@@ -104,4 +104,4 @@ RedisJSONStore.prototype.del = function(type, id, onCompletion) {
     });
 };
 
-exports.RedisJSONStore = RedisJSONStore;
+exports.RedisDatabank = RedisDatabank;
