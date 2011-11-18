@@ -29,7 +29,7 @@ var main = function(params) {
     // Get databank
     assert.doesNotThrow(function() {
         databank = require('../databank');
-    }, Error);
+    }, Error, "Error loading databank module");
 
     // Get Databank
     Databank = databank.Databank;
@@ -42,6 +42,8 @@ var main = function(params) {
     assert.doesNotThrow(function() {
         bank = Databank.get(params['driver'], params);
     }, Error, "Error on get()");
+
+    assert.ok(bank);
 
     bank.connect(params, function(err) {
         assert.ifError(err);
