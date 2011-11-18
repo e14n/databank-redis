@@ -191,8 +191,26 @@ NotImplementedError = function() {
 NotImplementedError.prototype = new DatabankError();
 NotImplementedError.prototype.constructor = NotImplementedError;
 
+NotConnectedError = function() {
+    this.name = 'NotConnectedError';
+    this.message = "Not connected to a server.";
+};
+
+NotConnectedError.prototype = new DatabankError();
+NotConnectedError.prototype.constructor = NotConnectedError;
+
+AlreadyConnectedError = function() {
+    this.name = 'AlreadyConnectedError';
+    this.message = "Already connected to a server.";
+};
+
+AlreadyConnectedError.prototype = new DatabankError();
+AlreadyConnectedError.prototype.constructor = AlreadyConnectedError;
+
 exports.Databank = Databank;
 exports.DatabankError = DatabankError;
 exports.NotImplementedError = NotImplementedError;
 exports.NoSuchThingError = NoSuchThingError;
 exports.AlreadyExistsError = AlreadyExistsError;
+exports.AlreadyConnectedError = AlreadyConnectedError;
+exports.NotConnectedError = NotConnectedError;
