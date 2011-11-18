@@ -27,8 +27,19 @@
 // Basically CRUD + Search. Recognizes types of data without
 // enforcing a schema.
 
-function Databank() {
+function Databank(params) {
 }
+
+Databank.get = function(driver, params) {
+
+    var className = driver.substr(0,1).toUpperCase() + driver.substr(1).toLowerCase() + "Databank",
+        module = './' . driver.toLowerCase() + "databank",
+        mod = require(module),
+        cls = mod[className],
+        db = new cls(params);
+
+    return db;
+};
 
 Databank.prototype = {
 
