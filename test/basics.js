@@ -26,10 +26,14 @@ var main = function(params) {
         Databank = null,
         DatabankError = null;
 
+    console.log("Loading module");
+
     // Get databank
     assert.doesNotThrow(function() {
         databank = require('../databank');
     }, Error, "Error loading databank module");
+
+    console.log("Getting classes");
 
     // Get Databank
     Databank = databank.Databank;
@@ -37,6 +41,8 @@ var main = function(params) {
 
     assert.ok(Databank);
     assert.ok(DatabankError);
+
+    console.log("Creating instance");
 
     // Instantiate with factory method
     assert.doesNotThrow(function() {
@@ -47,21 +53,25 @@ var main = function(params) {
 
     bank.connect(params, function(err) {
         assert.ifError(err);
+	console.log("Creating object");
         bank.create('test', 1, {'pass': true, 'iters': 42}, function(err, value) {
             assert.ifError(err);
             assert.ok(value);
             assert.equal(value['pass'], true);
             assert.equal(value['iters'], 42);
+	    console.log("Fetching object");
             bank.read('test', 1, function(err, value) {
                 assert.ifError(err);
                 assert.ok(value);
                 assert.equal(value['pass'], true);
                 assert.equal(value['iters'], 42);
+		console.log("Updating object");
                 bank.update('test', 1, {'pass': true, 'iters': 43}, function(err, value) {
                     assert.ifError(err);
                     assert.ok(value);
                     assert.equal(value['pass'], true);
                     assert.equal(value['iters'], 43);
+		    console.log("Deleting object");
                     bank.del('test', 1, function(err) {
                         assert.ifError(err);
                         bank.disconnect(function(err) {
