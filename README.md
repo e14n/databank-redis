@@ -29,12 +29,9 @@ limitations under the License.
 Interface
 ---------
 
-Rather than build a lot of factory-schmactory overhead, the interface
-is pretty remedial.
+There's a half-decent factory interface.
 
-    var RedisDatabank = require('./redisdatabank').RedisDatabank;
-
-    var bank = new RedisDatabank();
+    var bank = Databank.get('redis', {});
 
     bank.connect({}, function(err) {
         if (err) {
@@ -44,12 +41,15 @@ is pretty remedial.
         }
     });
 
-So, you actually have to code your implementation decision in when
-constructing a bank object. Probably that could be corrected in the
-future to be more data-driven.
-
 Databank
 ========
+
+The class has a single static method for for initializing an instance:
+
+* `get(driver, params)`
+
+  Get an instance of `DriverDatabank` from the module `driverdatabank` and
+  initialize it with the provided params (passed as a single object).
 
 The databank interface has these methods:
 
@@ -185,4 +185,4 @@ TODO
 * LevelDB driver
 * Cassandra driver
 * CouchDB driver
-* Factory interface
+* On-disk driver (directory like ./database/type/id.json)
