@@ -24,7 +24,8 @@ var DatabankError = databank.DatabankError;
 var AlreadyExistsError = databank.AlreadyExistsError;
 var NoSuchThingError = databank.NoSuchThingError;
 
-function RedisDatabank() {
+function RedisDatabank(params) {
+    // Ignore params
     this.client = null;
 }
 
@@ -32,7 +33,7 @@ RedisDatabank.prototype = new Databank();
 
 RedisDatabank.prototype.toKey = function(type, id) {
     return type + ':' + id;
-}
+};
 
 RedisDatabank.prototype.connect = function(params, onCompletion) {
     this.client = redis.createClient();
@@ -40,12 +41,12 @@ RedisDatabank.prototype.connect = function(params, onCompletion) {
 	if (onCompletion) {
 	    onCompletion(new DatabankError(err));
 	}
-    })
+    });
     this.client.on('connect', function() {
 	if (onCompletion) {
 	    onCompletion(null);
 	}
-    })
+    });
 };
 
 RedisDatabank.prototype.disconnect = function(onCompletion) {
