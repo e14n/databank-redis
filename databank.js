@@ -20,9 +20,6 @@
 // now, so I'm just going to declare the interface I need and try a few
 // different systems to implement it.
 
-// A custom error for Databank schtuff.
-
-
 // A thing that stores JSON.
 // Basically CRUD + Search. Recognizes types of data without
 // enforcing a schema.
@@ -30,10 +27,18 @@
 function Databank(params) {
 }
 
+Databank.driverToClassName = function(driver) {
+    return driver.substring(0,1).toUpperCase() + driver.substring(1, driver.length).toLowerCase() + "Databank";
+};
+
+Databank.driverToModuleName = function(driver) {
+    return './' + driver.toLowerCase() + "databank";
+};
+
 Databank.get = function(driver, params) {
 
-    var className = driver.substr(0,1).toUpperCase() + driver.substr(1).toLowerCase() + "Databank",
-        module = './' . driver.toLowerCase() + "databank",
+    var className = Databank.driverToClassName(driver),
+        module = Databank.driverToModuleName(driver),
         mod = require(module),
         cls = mod[className],
         db = new cls(params);
@@ -148,36 +153,40 @@ Databank.prototype = {
     }
 };
 
-function DatabankError(message) {
-    if (message) {
-	this.message = message;
-    }
-}
+// A custom error for Databank schtuff.
+
+DatabankError = function(message) {
+    this.name = 'DatabankError';
+    this.message = message || "Databank error";
+};
 
 DatabankError.prototype = new Error();
 DatabankError.prototype.constructor = DatabankError;
 
-function NoSuchThingError(type, id) {
+NoSuchThingError = function(type, id) {
+    this.name = 'NoSuchThingError';
     this.type = type;
     this.id   = id;
     this.message = "No such '" + type + "' with id '" + id + "'";
-}
+};
 
 NoSuchThingError.prototype = new DatabankError();
 NoSuchThingError.prototype.constructor = NoSuchThingError;
 
-function AlreadyExistsError(type, id) {
+AlreadyExistsError = function(type, id) {
+    this.name = 'AlreadyExistsError';
     this.type = type;
     this.id   = id;
     this.message = "Already have a(n) '" + type + "' with id '" + id + "'";
-}
+};
 
 AlreadyExistsError.prototype = new DatabankError();
 AlreadyExistsError.prototype.constructor = AlreadyExistsError;
 
-function NotImplementedError() {
+NotImplementedError = function() {
+    this.name = 'NotImplementedError';
     this.message = "Method not yet implemented.";
-}
+};
 
 NotImplementedError.prototype = new DatabankError();
 NotImplementedError.prototype.constructor = NotImplementedError;
@@ -187,4 +196,3 @@ exports.DatabankError = DatabankError;
 exports.NotImplementedError = NotImplementedError;
 exports.NoSuchThingError = NoSuchThingError;
 exports.AlreadyExistsError = AlreadyExistsError;
-
