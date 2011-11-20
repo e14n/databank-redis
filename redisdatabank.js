@@ -38,70 +38,70 @@ RedisDatabank.prototype.toKey = function(type, id) {
 RedisDatabank.prototype.connect = function(params, onCompletion) {
     this.client = redis.createClient();
     this.client.on('error', function(err) {
-	if (onCompletion) {
-	    onCompletion(new DatabankError(err));
-	}
+        if (onCompletion) {
+            onCompletion(new DatabankError(err));
+        }
     });
     this.client.on('connect', function() {
-	if (onCompletion) {
-	    onCompletion(null);
-	}
+        if (onCompletion) {
+            onCompletion(null);
+        }
     });
 };
 
 RedisDatabank.prototype.disconnect = function(onCompletion) {
     this.client.quit(function(err) {
-	if (err) {
-	    onCompletion(new DatabankError());
-	} else {
-	    onCompletion(null);
-	}
+        if (err) {
+            onCompletion(new DatabankError());
+        } else {
+            onCompletion(null);
+        }
     });
 };
 
 RedisDatabank.prototype.create = function(type, id, value, onCompletion) {
     this.client.setnx(this.toKey(type, id), JSON.stringify(value), function(err, result) {
-	if (err) {
-	    onCompletion(new DatabankError(err));
-	} else if (result == 0) {
-	    onCompletion(new AlreadyExistsError(type, id));
-	} else {
-	    onCompletion(null, value);
-	}
+        if (err) {
+            onCompletion(new DatabankError(err));
+        } else if (result === 0) {
+            onCompletion(new AlreadyExistsError(type, id));
+        } else {
+            onCompletion(null, value);
+        }
     });
 };
 
 RedisDatabank.prototype.read = function(type, id, onCompletion) {
     this.client.get(this.toKey(type, id), function(err, value) {
-	if (err) {
-	    onCompletion(new DatabankError(err), null);
-	} else if (value == null) {
-	    onCompletion(new NoSuchThingError(type, id), null);
-	} else {
-	    onCompletion(null, JSON.parse(value));
-	}
+        if (err) {
+            onCompletion(new DatabankError(err), null);
+        } else if (value === null) {
+            onCompletion(new NoSuchThingError(type, id), null);
+        } else {
+            onCompletion(null, JSON.parse(value));
+        }
     });
 };
 
 RedisDatabank.prototype.update = function(type, id, value, onCompletion) {
     this.client.set(this.toKey(type, id), JSON.stringify(value), function(err) {
-	if (err) {
-	    onCompletion(new DatabankError(err), null);
-	} else {
-	    onCompletion(null, value);
-	}
+        if (err) {
+            onCompletion(new DatabankError(err), null);
+        } else {
+            onCompletion(null, value);
+        }
     });
 };
 
 RedisDatabank.prototype.del = function(type, id, onCompletion) {
     this.client.del(this.toKey(type, id), function(err, count) {
-	if (err) {
-	    onCompletion(new DatabankError(err));
-	} else if (count == 0) {
-	    onCompletion(new NoSuchThingError(type, id));
-	} else {
-	    onCompletion(null);
-	}
+        if (err) {
+            onCompletion(new DatabankError(err));
+        } else if (count === 0) {
+            onCompletion(new NoSuchThingError(type, id));
+        } else {
+            onCompletion(null);
+        }
     });
 };
 
