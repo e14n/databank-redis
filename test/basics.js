@@ -57,18 +57,21 @@ var main = function(params) {
         bank.create('test', 1, {'pass': true, 'iters': 42}, function(err, value) {
             assert.ifError(err);
             assert.ok(value);
+            assert.equal(typeof value, 'object');
             assert.equal(value.pass, true);
             assert.equal(value.iters, 42);
             console.log("Fetching object");
             bank.read('test', 1, function(err, value) {
                 assert.ifError(err);
                 assert.ok(value);
+                assert.equal(typeof value, 'object');
                 assert.equal(value.pass, true);
                 assert.equal(value.iters, 42);
                 console.log("Updating object");
                 bank.update('test', 1, {'pass': true, 'iters': 43}, function(err, value) {
                     assert.ifError(err);
                     assert.ok(value);
+                    assert.equal(typeof value, 'object');
                     assert.equal(value.pass, true);
                     assert.equal(value.iters, 43);
                     console.log("Deleting object");
