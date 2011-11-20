@@ -27,6 +27,7 @@ var NoSuchThingError = databank.NoSuchThingError;
 function RedisDatabank(params) {
     // Ignore params
     this.client = null;
+    this.schema = params.schema || {};
 }
 
 RedisDatabank.prototype = new Databank();

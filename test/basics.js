@@ -46,7 +46,7 @@ var main = function(params) {
 
     // Instantiate with factory method
     assert.doesNotThrow(function() {
-        bank = Databank.get(params.driver, params);
+        bank = Databank.get(params.driver, {schema: {test: {pkey: 'number'}}});
     }, Error, "Error on get()");
 
     assert.ok(bank);
