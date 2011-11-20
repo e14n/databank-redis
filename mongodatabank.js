@@ -27,6 +27,7 @@ var databank = require('./databank'),
 
 var MongoDatabank = function(params) {
     this.db = null;
+    this.schema = params.schema || {};
 };
 
 MongoDatabank.prototype = new Databank();
@@ -95,7 +96,11 @@ MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
         return;
     }
 
-    var idCol = this.getIdCol(type);
+    var pkey = this.getPrimaryKey(type);
+
+    if (!value[pkey] || value[pkey] !== id) {
+        value[pkey] = id;
+    }
 
     this.db.collection(type, function(err, coll) {
         if (err) {
@@ -133,7 +138,7 @@ MongoDatabank.prototype.read = function(type, id, onCompletion) {
         return;
     }
 
-    var idCol = this.getIdCol(type);
+    var pkey = this.getPrimaryKey(type);
 
     this.db.collection(type, function(err, coll) {
         var sel = {};
@@ -142,7 +147,7 @@ MongoDatabank.prototype.read = function(type, id, onCompletion) {
                 onCompletion(err, null);
             }
         }
-        sel[idCol] = id;
+        sel[pkey] = id;
         coll.findOne(sel, function(err, value) {
             if (err) {
                 // FIXME: find key-miss errors and return a NotExistsError
@@ -177,16 +182,20 @@ MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
         return;
     }
 
-    var idCol = this.getIdCol(type);
+    var pkey = this.getPrimaryKey(type);
+
+    if (!value[pkey] || value[pkey] !== id) {
+        value[pkey] = id;
+    }
 
     this.db.collection(type, function(err, coll) {
+        var sel = {};
         if (err) {
             if (onCompletion) {
                 onCompletion(err, null);
             }
         }
-        var sel;
-        sel[idCol] = id;
+        sel[pkey] = id;
         coll.update(sel, value, {}, function(err, newValue) {
             if (err) {
                 // FIXME: find key-miss errors and return a NotExistsError
@@ -217,7 +226,7 @@ MongoDatabank.prototype.del = function(type, id, onCompletion) {
         return;
     }
 
-    var idCol = this.getIdCol(type);
+    var pkey = this.getPrimaryKey(type);
 
     this.db.collection(type, function(err, coll) {
         if (err) {
@@ -226,7 +235,7 @@ MongoDatabank.prototype.del = function(type, id, onCompletion) {
             }
         }
         var sel;
-        sel[idCol] = id;
+        sel[pkey] = id;
         coll.remove(sel, {}, function(err) {
             if (err) {
                 // FIXME: find key-miss errors and return a NotExistsError
@@ -287,8 +296,8 @@ MongoDatabank.prototype.search = function(type, criteria, onResult, onCompletion
     });
 };
 
-MongoDatabank.prototype.getIdCol = function(type) {
-    return (this.schema && this.schema[type]) ? this.schema[type].idCol : '_id';
+MongoDatabank.prototype.getPrimaryKey = function(type) {
+    return (this.schema && this.schema[type]) ? this.schema[type].pkey : '_id';
 };
 
 exports.MongoDatabank = MongoDatabank;
