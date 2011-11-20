@@ -54,9 +54,9 @@ Databank.prototype = {
 
     connect: function(params, onCompletion)
     {
-	if (onCompletion) {
-	    onCompletion(new NotImplementedError());
-	}
+        if (onCompletion) {
+            onCompletion(new NotImplementedError());
+        }
     },
 
     // Disconnect yourself.
@@ -64,9 +64,9 @@ Databank.prototype = {
 
     disconnect: function(onCompletion)
     {
-	if (onCompletion) {
-	    onCompletion(new NotImplementedError());
-	}
+        if (onCompletion) {
+            onCompletion(new NotImplementedError());
+        }
     },
 
     // Create a new thing
@@ -77,9 +77,9 @@ Databank.prototype = {
 
     create: function(type, id, value, onCompletion)
     {
-	if (onCompletion) {
-	    onCompletion(new NotImplementedError(), null);
-	}
+        if (onCompletion) {
+            onCompletion(new NotImplementedError(), null);
+        }
     },
 
     // Read an existing thing
@@ -89,9 +89,9 @@ Databank.prototype = {
 
     read: function(type, id, onCompletion)
     {
-	if (onCompletion) {
-	    onCompletion(new NotImplementedError(), null);
-	}
+        if (onCompletion) {
+            onCompletion(new NotImplementedError(), null);
+        }
     },
 
     // Update an existing thing
@@ -102,9 +102,9 @@ Databank.prototype = {
 
     update: function(type, id, value, onCompletion)
     {
-	if (onCompletion) {
-	    onCompletion(new NotImplementedError(), null);
-	}
+        if (onCompletion) {
+            onCompletion(new NotImplementedError(), null);
+        }
     },
 
     // Update an existing thing
@@ -115,15 +115,15 @@ Databank.prototype = {
 
     save: function(type, id, value, onCompletion)
     {
-	this.update(type, id, value, function(err, result) {
-	    if (err instanceof NoSuchThingError) {
-		this.create(type, id, value, function(err, result) {
-		    onCompletion(err, result);
-		});
-	    } else {
-		onCompletion(err, result);
-	    }
-	});
+        this.update(type, id, value, function(err, result) {
+            if (err instanceof NoSuchThingError) {
+                this.create(type, id, value, function(err, result) {
+                    onCompletion(err, result);
+                });
+            } else {
+                onCompletion(err, result);
+            }
+        });
     },
 
     // Delete an existing thing
@@ -134,9 +134,9 @@ Databank.prototype = {
 
     del: function(type, id, onCompletion)
     {
-	if (onCompletion) {
-	    onCompletion(new NotImplementedError());
-	}
+        if (onCompletion) {
+            onCompletion(new NotImplementedError());
+        }
     },
 
     // Search for things
@@ -147,9 +147,9 @@ Databank.prototype = {
 
     search: function(type, criteria, onResult, onCompletion)
     {
-	if (onCompletion) {
-	    onCompletion(new NotImplementedError());
-	}
+        if (onCompletion) {
+            onCompletion(new NotImplementedError());
+        }
     }
 };
 
