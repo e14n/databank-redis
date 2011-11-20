@@ -37,7 +37,7 @@ There's a half-decent factory interface.
         if (err) {
             console.log("Couldn't connect to databank: " + err.message);
         } else {
-       	    // ...       	  
+            // ...                
         }
     });
 
@@ -77,15 +77,15 @@ The databank interface has these methods:
 
       store.create('activity', uuid, activity, function(err, value) {
           if (err instanceof AlreadyExistsError) {
-	      res.writeHead(409, {'Content-Type': 'application/json'});
-	      res.end(JSON.stringify(err.message));
-	  } else if (err) {
-	      res.writeHead(400, {'Content-Type': 'application/json'});
-	      res.end(JSON.stringify(err.message));
-	  } else {
-	      res.writeHead(200, {'Content-Type': 'application/json'});
-	      res.end(JSON.stringify(value));
-	  }
+              res.writeHead(409, {'Content-Type': 'application/json'});
+              res.end(JSON.stringify(err.message));
+          } else if (err) {
+              res.writeHead(400, {'Content-Type': 'application/json'});
+              res.end(JSON.stringify(err.message));
+          } else {
+              res.writeHead(200, {'Content-Type': 'application/json'});
+              res.end(JSON.stringify(value));
+          }
       });
 
 * `read(type, id, onCompletion)`
@@ -96,15 +96,15 @@ The databank interface has these methods:
   Common error type here is `NoSuchThingError` if the databank has no such object.
 
     bank.read('Book', '978-0141439600', function(err, user) {
-	if (err instanceof NoSuchThingError) {
-	    res.writeHead(404, {'Content-Type': 'application/json'});
-	    res.end(JSON.stringify(err.message));
-	} else if (err) {
-	    res.writeHead(500, {'Content-Type': 'application/json'});
-	    res.end(JSON.stringify(err.message));
-	} else {
-	    res.writeHead(200, {'Content-Type': 'application/json'});
-	    res.end(JSON.stringify(user));
+        if (err instanceof NoSuchThingError) {
+            res.writeHead(404, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify(err.message));
+        } else if (err) {
+            res.writeHead(500, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify(err.message));
+        } else {
+            res.writeHead(200, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify(user));
         }
     });
 
@@ -145,17 +145,17 @@ The databank interface has these methods:
         var results = [];
 
         bank.search('user', {role: 'moderator'}, function(result) {
-    			results.append(result);
+                        results.append(result);
                     },
                     function(err) {
-		        if (err) {
-			    callback(err, null);
-			} else {
-			    results.sort(function(a, b) { 
-			        return a.created - b.created;
-			    });
-			    callback(null, results);
-			}
+                        if (err) {
+                            callback(err, null);
+                        } else {
+                            results.sort(function(a, b) { 
+                                return a.created - b.created;
+                            });
+                            callback(null, results);
+                        }
                     });
     }
 
