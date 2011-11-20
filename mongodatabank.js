@@ -23,7 +23,6 @@ var databank = require('./databank'),
     NoSuchThingError = databank.NoSuchThingError,
     mongodb = require('mongodb'),
     Db = mongodb.Db,
-    Connection = mongodb.Connection,
     Server = mongodb.Server;
 
 var MongoDatabank = function(params) {
@@ -104,7 +103,7 @@ MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
                 onCompletion(err, null);
             }
         }
-        coll.insert(value, function(err, newValue) {
+        coll.insert(value, function(err, newValues) {
             if (err) {
                 // FIXME: find unique key errors and convert to AlreadyExistsError
                 if (onCompletion) {
@@ -112,7 +111,8 @@ MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
                 }
             } else {
                 if (onCompletion) {
-                    onCompletion(null, newValue);
+                    // Mongo returns an array of values
+                    onCompletion(null, newValues[0]);
                 }
             }
         });
@@ -136,18 +136,22 @@ MongoDatabank.prototype.read = function(type, id, onCompletion) {
     var idCol = this.getIdCol(type);
 
     this.db.collection(type, function(err, coll) {
+        var sel = {};
         if (err) {
             if (onCompletion) {
                 onCompletion(err, null);
             }
         }
-        var sel;
         sel[idCol] = id;
         coll.findOne(sel, function(err, value) {
             if (err) {
                 // FIXME: find key-miss errors and return a NotExistsError
                 if (onCompletion) {
                     onCompletion(err, null);
+                }
+            } else if (!value) {
+                if (onCompletion) {
+                    onCompletion(new NoSuchThingError(type, id), null);
                 }
             } else {
                 if (onCompletion) {
