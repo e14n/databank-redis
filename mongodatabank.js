@@ -35,30 +35,30 @@ MongoDatabank.prototype.constructor = MongoDatabank;
 
 MongoDatabank.prototype.connect = function(params, onCompletion) {
 
-    var host = params['host'] || 'localhost',
-	port = params['port'] || 27017,
-	dbname = params['db'] || 'test',
-	server = new Server(host, port, params);
+    var host = params.host || 'localhost',
+        port = params.port || 27017,
+        dbname = params.db || 'test',
+        server = new Server(host, port, params);
 
     if (this.db) {
-	if (onCompletion) {
-	    onCompletion(new AlreadyConnectedError());
-	}
-	return;
+        if (onCompletion) {
+            onCompletion(new AlreadyConnectedError());
+        }
+        return;
     }
 
     this.db = new Db(dbname, server);
 
     this.db.open(function(err, newDb) {
-	if (err) {
-	    if (onCompletion) {
-		onCompletion(err);
-	    }
-	} else {
-	    if (onCompletion) {
-		onCompletion(null);
-	    }
-	}
+        if (err) {
+            if (onCompletion) {
+                onCompletion(err);
+            }
+        } else {
+            if (onCompletion) {
+                onCompletion(null);
+            }
+        }
     });
 };
 
@@ -67,17 +67,17 @@ MongoDatabank.prototype.connect = function(params, onCompletion) {
 
 MongoDatabank.prototype.disconnect = function(onCompletion) {
     if (!this.db) {
-	if (onCompletion) {
-	    onCompletion(new NotConnectedError());
-	}
-	return;
+        if (onCompletion) {
+            onCompletion(new NotConnectedError());
+        }
+        return;
     }
     this.db.close(function() {
-	this.db     = null;
-	this.server = null;
-	if (onCompletion) {
-	    onCompletion(null);
-	}
+        this.db     = null;
+        this.server = null;
+        if (onCompletion) {
+            onCompletion(null);
+        }
     });
 };
 
@@ -90,32 +90,32 @@ MongoDatabank.prototype.disconnect = function(onCompletion) {
 MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
 
     if (!this.db) {
-	if (onCompletion) {
-	    onCompletion(new NotConnectedError());
-	}
-	return;
+        if (onCompletion) {
+            onCompletion(new NotConnectedError());
+        }
+        return;
     }
 
     var idCol = this.getIdCol(type);
 
     this.db.collection(type, function(err, coll) {
-	if (err) {
-	    if (onCompletion) {
-		onCompletion(err, null);
-	    }
-	}
-	coll.insert(value, function(err, newValue) {
-	    if (err) {
-		// FIXME: find unique key errors and convert to AlreadyExistsError
-		if (onCompletion) {
-		    onCompletion(err, null);
-		}
-	    } else {
-		if (onCompletion) {
-		    onCompletion(null, newValue);
-		}
-	    }
-	});
+        if (err) {
+            if (onCompletion) {
+                onCompletion(err, null);
+            }
+        }
+        coll.insert(value, function(err, newValue) {
+            if (err) {
+                // FIXME: find unique key errors and convert to AlreadyExistsError
+                if (onCompletion) {
+                    onCompletion(err, null);
+                }
+            } else {
+                if (onCompletion) {
+                    onCompletion(null, newValue);
+                }
+            }
+        });
     });
 };
 
@@ -127,34 +127,34 @@ MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
 MongoDatabank.prototype.read = function(type, id, onCompletion) {
 
     if (!this.db) {
-	if (onCompletion) {
-	    onCompletion(new NotConnectedError());
-	}
-	return;
+        if (onCompletion) {
+            onCompletion(new NotConnectedError());
+        }
+        return;
     }
 
     var idCol = this.getIdCol(type);
 
     this.db.collection(type, function(err, coll) {
-	if (err) {
-	    if (onCompletion) {
-		onCompletion(err, null);
-	    }
-	}
-	var sel;
-	sel[idCol] = id;
-	coll.findOne(sel, function(err, value) {
-	    if (err) {
-		// FIXME: find key-miss errors and return a NotExistsError
-		if (onCompletion) {
-		    onCompletion(err, null);
-		}
-	    } else {
-		if (onCompletion) {
-		    onCompletion(null, value);
-		}
-	    }
-	});
+        if (err) {
+            if (onCompletion) {
+                onCompletion(err, null);
+            }
+        }
+        var sel;
+        sel[idCol] = id;
+        coll.findOne(sel, function(err, value) {
+            if (err) {
+                // FIXME: find key-miss errors and return a NotExistsError
+                if (onCompletion) {
+                    onCompletion(err, null);
+                }
+            } else {
+                if (onCompletion) {
+                    onCompletion(null, value);
+                }
+            }
+        });
     });
 };
 
@@ -167,34 +167,34 @@ MongoDatabank.prototype.read = function(type, id, onCompletion) {
 MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
 
     if (!this.db) {
-	if (onCompletion) {
-	    onCompletion(new NotConnectedError());
-	}
-	return;
+        if (onCompletion) {
+            onCompletion(new NotConnectedError());
+        }
+        return;
     }
 
     var idCol = this.getIdCol(type);
 
     this.db.collection(type, function(err, coll) {
-	if (err) {
-	    if (onCompletion) {
-		onCompletion(err, null);
-	    }
-	}
-	var sel;
-	sel[idCol] = id;
-	coll.update(sel, value, {}, function(err, newValue) {
-	    if (err) {
-		// FIXME: find key-miss errors and return a NotExistsError
-		if (onCompletion) {
-		    onCompletion(err, null);
-		}
-	    } else {
-		if (onCompletion) {
-		    onCompletion(null, newValue);
-		}
-	    }
-	});
+        if (err) {
+            if (onCompletion) {
+                onCompletion(err, null);
+            }
+        }
+        var sel;
+        sel[idCol] = id;
+        coll.update(sel, value, {}, function(err, newValue) {
+            if (err) {
+                // FIXME: find key-miss errors and return a NotExistsError
+                if (onCompletion) {
+                    onCompletion(err, null);
+                }
+            } else {
+                if (onCompletion) {
+                    onCompletion(null, newValue);
+                }
+            }
+        });
     });
 };
 
@@ -207,34 +207,34 @@ MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
 MongoDatabank.prototype.del = function(type, id, onCompletion) {
 
     if (!this.db) {
-	if (onCompletion) {
-	    onCompletion(new NotConnectedError());
-	}
-	return;
+        if (onCompletion) {
+            onCompletion(new NotConnectedError());
+        }
+        return;
     }
 
     var idCol = this.getIdCol(type);
 
     this.db.collection(type, function(err, coll) {
-	if (err) {
-	    if (onCompletion) {
-		onCompletion(err, null);
-	    }
-	}
-	var sel;
-	sel[idCol] = id;
-	coll.remove(sel, {}, function(err) {
-	    if (err) {
-		// FIXME: find key-miss errors and return a NotExistsError
-		if (onCompletion) {
-		    onCompletion(err);
-		}
-	    } else {
-		if (onCompletion) {
-		    onCompletion(null);
-		}
-	    }
-	});
+        if (err) {
+            if (onCompletion) {
+                onCompletion(err, null);
+            }
+        }
+        var sel;
+        sel[idCol] = id;
+        coll.remove(sel, {}, function(err) {
+            if (err) {
+                // FIXME: find key-miss errors and return a NotExistsError
+                if (onCompletion) {
+                    onCompletion(err);
+                }
+            } else {
+                if (onCompletion) {
+                    onCompletion(null);
+                }
+            }
+        });
     });
 };
 
@@ -247,39 +247,39 @@ MongoDatabank.prototype.del = function(type, id, onCompletion) {
 MongoDatabank.prototype.search = function(type, criteria, onResult, onCompletion) {
 
     if (!this.db) {
-	if (onCompletion) {
-	    onCompletion(new NotConnectedError());
-	}
-	return;
+        if (onCompletion) {
+            onCompletion(new NotConnectedError());
+        }
+        return;
     }
 
     this.db.collection(type, function(err, coll) {
-	if (err) {
-	    if (onCompletion) {
-		onCompletion(err, null);
-	    }
-	}
-	coll.find(criteria, function(err, cursor) {
-	    if (err) {
-		if (onCompletion) {
-		    onCompletion(err);
-		}
-	    } else {
-		var lastErr = null;
+        if (err) {
+            if (onCompletion) {
+                onCompletion(err, null);
+            }
+        }
+        coll.find(criteria, function(err, cursor) {
+            if (err) {
+                if (onCompletion) {
+                    onCompletion(err);
+                }
+            } else {
+                var lastErr = null;
 
-		cursor.each(function(err, value) {
-		    if (err) {
-			lastErr = err;
-		    } else {
-			if (onResult) {
-			    onResult(value);
-			}
-		    }
-		});
+                cursor.each(function(err, value) {
+                    if (err) {
+                        lastErr = err;
+                    } else {
+                        if (onResult) {
+                            onResult(value);
+                        }
+                    }
+                });
 
-		onCompletion(lastErr);
-	    }
-	});
+                onCompletion(lastErr);
+            }
+        });
     });
 };
 
