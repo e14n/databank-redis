@@ -155,7 +155,7 @@ Databank.prototype = {
 
 // A custom error for Databank schtuff.
 
-DatabankError = function(message) {
+var DatabankError = function(message) {
     this.name = 'DatabankError';
     this.message = message || "Databank error";
 };
@@ -163,7 +163,7 @@ DatabankError = function(message) {
 DatabankError.prototype = new Error();
 DatabankError.prototype.constructor = DatabankError;
 
-NoSuchThingError = function(type, id) {
+var NoSuchThingError = function(type, id) {
     this.name = 'NoSuchThingError';
     this.type = type;
     this.id   = id;
@@ -173,7 +173,7 @@ NoSuchThingError = function(type, id) {
 NoSuchThingError.prototype = new DatabankError();
 NoSuchThingError.prototype.constructor = NoSuchThingError;
 
-AlreadyExistsError = function(type, id) {
+var AlreadyExistsError = function(type, id) {
     this.name = 'AlreadyExistsError';
     this.type = type;
     this.id   = id;
@@ -183,7 +183,7 @@ AlreadyExistsError = function(type, id) {
 AlreadyExistsError.prototype = new DatabankError();
 AlreadyExistsError.prototype.constructor = AlreadyExistsError;
 
-NotImplementedError = function() {
+var NotImplementedError = function() {
     this.name = 'NotImplementedError';
     this.message = "Method not yet implemented.";
 };
@@ -191,7 +191,7 @@ NotImplementedError = function() {
 NotImplementedError.prototype = new DatabankError();
 NotImplementedError.prototype.constructor = NotImplementedError;
 
-NotConnectedError = function() {
+var NotConnectedError = function() {
     this.name = 'NotConnectedError';
     this.message = "Not connected to a server.";
 };
@@ -199,7 +199,7 @@ NotConnectedError = function() {
 NotConnectedError.prototype = new DatabankError();
 NotConnectedError.prototype.constructor = NotConnectedError;
 
-AlreadyConnectedError = function() {
+var AlreadyConnectedError = function() {
     this.name = 'AlreadyConnectedError';
     this.message = "Already connected to a server.";
 };
