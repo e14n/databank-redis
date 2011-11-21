@@ -38,7 +38,9 @@ MongoDatabank.prototype.connect = function(params, onCompletion) {
     var host = params.host || 'localhost',
         port = params.port || 27017,
         dbname = params.db || 'test',
-        server = new Server(host, port, params);
+        server = new Server(host, port, params),
+        checkSchema = params.checkSchema || true,
+        bank = this;
 
     if (this.db) {
         if (onCompletion) {
@@ -55,8 +57,22 @@ MongoDatabank.prototype.connect = function(params, onCompletion) {
                 onCompletion(err);
             }
         } else {
-            if (onCompletion) {
-                onCompletion(null);
+            if (checkSchema) {
+                bank.checkSchema(function(err) {
+                    if (err) {
+                        if (onCompletion) {
+                            onCompletion(err);
+                        }
+                    } else {
+                        if (onCompletion) {
+                            onCompletion(null);
+                        }
+                    }
+                });
+            } else {
+                if (onCompletion) {
+                    onCompletion(null);
+                }
             }
         }
     });
@@ -298,6 +314,55 @@ MongoDatabank.prototype.search = function(type, criteria, onResult, onCompletion
 
 MongoDatabank.prototype.getPrimaryKey = function(type) {
     return (this.schema && this.schema[type]) ? this.schema[type].pkey : '_id';
+};
+
+MongoDatabank.prototype.checkSchema = function(onCompletion) {
+
+    var pairs = [];
+    var pair;
+    var type;
+    var bank = this;
+
+    var checkType = function(type, schema, next) {
+        var keys = {};
+        bank.db.collection(type, function(err, coll) {
+            if (err) {
+                next(err);
+            } else {
+                keys[schema.pkey] = 1;
+                coll.ensureIndex(keys, {unique: true}, function(err) {
+                    if (err) {
+                        next(err);
+                    } else {
+                        next(null);
+                    }
+                });
+            }
+        });
+    };
+
+    var checkNextType = function(pairsLeft, next) {
+        var pair;
+        if (pairsLeft.length === 0) {
+            next(null);
+        } else {
+            pair = pairsLeft.pop();
+            checkType(pair[0], pair[1], function(err) {
+                if (err) {
+                    next(err);
+                } else {
+                    checkNextType(pairsLeft, next);
+                }
+            });
+        }
+    };
+
+    for (type in this.schema) {
+        pair = [type, this.schema[type]];
+        pairs.push(pair);
+    }
+
+    checkNextType(pairs, onCompletion);
 };
 
 exports.MongoDatabank = MongoDatabank;
