@@ -212,7 +212,7 @@ MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
             }
         }
         sel[pkey] = id;
-        coll.update(sel, value, {}, function(err, newValue) {
+        coll.update(sel, value, {}, function(err) {
             if (err) {
                 // FIXME: find key-miss errors and return a NotExistsError
                 if (onCompletion) {
@@ -220,7 +220,7 @@ MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
                 }
             } else {
                 if (onCompletion) {
-                    onCompletion(null, newValue);
+                    onCompletion(null, value);
                 }
             }
         });
@@ -234,6 +234,8 @@ MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
 // onCompletion(err): function to call on completion
 
 MongoDatabank.prototype.del = function(type, id, onCompletion) {
+
+    var sel = {};
 
     if (!this.db) {
         if (onCompletion) {
@@ -250,7 +252,7 @@ MongoDatabank.prototype.del = function(type, id, onCompletion) {
                 onCompletion(err, null);
             }
         }
-        var sel;
+
         sel[pkey] = id;
         coll.remove(sel, {}, function(err) {
             if (err) {
