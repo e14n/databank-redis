@@ -21,7 +21,11 @@ var databank = require('./databank'),
     DatabankError = databank.DatabankError,
     AlreadyExistsError = databank.AlreadyExistsError,
     NoSuchThingError = databank.NoSuchThingError,
-    mongodb = require('mongodb'),
+    NotImplementedError = databank.NotImplementedError,
+    AlreadyConnectedError = databank.AlreadyConnectedError,
+    NotConnectedError = databank.NotConnectedError;
+
+var mongodb = require('mongodb'),
     Db = mongodb.Db,
     Server = mongodb.Server;
 
@@ -105,6 +109,8 @@ MongoDatabank.prototype.disconnect = function(onCompletion) {
 
 MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
 
+    var orig;
+
     if (!this.db) {
         if (onCompletion) {
             onCompletion(new NotConnectedError());
@@ -114,8 +120,13 @@ MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
 
     var pkey = this.getPrimaryKey(type);
 
-    if (!value[pkey] || value[pkey] !== id) {
-        value[pkey] = id;
+    if (typeof value === 'object') {
+        if (!value[pkey] || value[pkey] !== id) {
+            value[pkey] = id;
+        }
+    } else {
+        onCompletion(new NotImplementedError("MongoDatabank doesn't know how to deal with non-object values."));
+        return;
     }
 
     this.db.collection(type, function(err, coll) {

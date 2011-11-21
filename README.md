@@ -1,9 +1,14 @@
-This package is an abstraction tool for NoSQL databases in Node.js.
+This package is an abstraction tool for document stores or key-value
+stores in Node.js.
 
-At development time, I don't really know or care which server I'm
-using; I'm just making JSON objects and CRUD'ing them. I figure if I
-stick to this simple interface, I won't get in trouble when I move
-between servers.
+My goal is to hedge my bets by using a simple CRUD + search interface
+for interacting with a datastore. If at some point I really need the
+special snowflake features of Redis or MongoDB or Cassandra or Riak or
+whatever, I should be able to bust out of this simple abstraction and
+use their native interface without rewriting a lot of code.
+
+I also want the data structures stored to look roughly like what
+someone experienced with the datastore would expect.
 
 I chose the name "databank" since it's not in widespread use and won't
 cause name conflicts, and because it sounds like something a 1960s
@@ -26,20 +31,38 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Interface
----------
+Schemata
+--------
 
-There's a half-decent factory interface.
+This library assumes you have document "types" - like "person",
+"table", "photo", "bankaccount", "trainreservation" -- that you can
+identify with a unique scalar key -- email address, URL, UUID, SSN, or
+whatever.
 
-    var bank = Databank.get('redis', {});
+Your "document" is anything that can be JSON-encoded and
+decoded. Scalar, array and tree values are all totally cool.
 
-    bank.connect({}, function(err) {
-        if (err) {
-            console.log("Couldn't connect to databank: " + err.message);
-        } else {
-            // ...                
-        }
-    });
+Implementation classes that support schemata should support a "schema"
+element on the constructor params for `Databank.get()` (see below). A
+schema can have elements for each type, with the following elements:
+
+* pkey: the primary key element name.
+
+* indices: array of element names that should be indexed. You should
+  really have an index on each element you search on frequently.
+
+Dotted notation
+===============
+
+In schemata you can use dotted-notation, a la MongoDB, to define
+fields that are part of parts of the object. For example, for an
+object like this:
+
+    { email: "evan@status.net", name: { last: "Prodromou", first: "Evan" } }
+
+...you may have a schema like this:
+
+    { person: { pkey: "email", indices: ["name.last"] } }
 
 Databank
 ========
@@ -50,6 +73,18 @@ The class has a single static method for for initializing an instance:
 
   Get an instance of `DriverDatabank` from the module `driverdatabank` and
   initialize it with the provided params (passed as a single object).
+
+  This is the place you should usually pass in a schema parameter.
+
+    var bank = Databank.get('redis', {schema: {person: {pkey: "email"}}});
+
+    bank.connect({}, function(err) {
+        if (err) {
+            console.log("Couldn't connect to databank: " + err.message);
+        } else {
+            // ...                
+        }
+    });
 
 The databank interface has these methods:
 
@@ -180,7 +215,6 @@ This is a subclass of `Error` for stuff that went wrong with a
 TODO
 ----
 
-* MongoDB driver
 * Riak driver
 * LevelDB driver
 * Cassandra driver
