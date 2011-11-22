@@ -1,5 +1,6 @@
 {
     "name": "databank",
+    "description": "Deployment-time-binding of JSON storage engine",
     "author": "Evan Prodromou <evan@status.net>",
     "version": "0.1.0dev",
     "dependencies": {
