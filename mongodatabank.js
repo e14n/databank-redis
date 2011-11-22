@@ -135,11 +135,16 @@ MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
                 onCompletion(err, null);
             }
         }
-        coll.insert(value, function(err, newValues) {
+        coll.insert(value, {safe: true}, function(err, newValues) {
             if (err) {
-                // FIXME: find unique key errors and convert to AlreadyExistsError
-                if (onCompletion) {
-                    onCompletion(err, null);
+                if (err.name && err.name == 'MongoError' && err.code && err.code == 11000) {
+                    if (onCompletion) {
+                        onCompletion(new AlreadyExistsError(type, id), null);
+                    }
+                } else {
+                    if (onCompletion) {
+                        onCompletion(err, null);
+                    }
                 }
             } else {
                 if (onCompletion) {
@@ -223,7 +228,7 @@ MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
             }
         }
         sel[pkey] = id;
-        coll.update(sel, value, {}, function(err) {
+        coll.findAndModify(sel, [['_id', 'ascending']], value, {safe: true, new: true}, function(err, result) {
             if (err) {
                 // FIXME: find key-miss errors and return a NotExistsError
                 if (onCompletion) {
@@ -231,7 +236,45 @@ MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
                 }
             } else {
                 if (onCompletion) {
-                    onCompletion(null, value);
+                    onCompletion(null, result);
+                }
+            }
+        });
+    });
+};
+
+MongoDatabank.prototype.save = function(type, id, value, onCompletion) {
+
+    if (!this.db) {
+        if (onCompletion) {
+            onCompletion(new NotConnectedError());
+        }
+        return;
+    }
+
+    var pkey = this.getPrimaryKey(type);
+
+    if (!value[pkey] || value[pkey] !== id) {
+        value[pkey] = id;
+    }
+
+    this.db.collection(type, function(err, coll) {
+        var sel = {};
+        if (err) {
+            if (onCompletion) {
+                onCompletion(err, null);
+            }
+        }
+        sel[pkey] = id;
+        coll.findAndModify(sel, [['_id', 'ascending']], value, {safe: true, new: true}, function(err, result) {
+            if (err) {
+                // FIXME: find key-miss errors and return a NotExistsError
+                if (onCompletion) {
+                    onCompletion(err, null);
+                }
+            } else {
+                if (onCompletion) {
+                    onCompletion(null, result);
                 }
             }
         });
