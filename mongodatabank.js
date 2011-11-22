@@ -246,8 +246,6 @@ MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
 
 MongoDatabank.prototype.del = function(type, id, onCompletion) {
 
-    var sel = {};
-
     if (!this.db) {
         if (onCompletion) {
             onCompletion(new NotConnectedError());
@@ -258,6 +256,9 @@ MongoDatabank.prototype.del = function(type, id, onCompletion) {
     var pkey = this.getPrimaryKey(type);
 
     this.db.collection(type, function(err, coll) {
+
+        var sel = {};
+
         if (err) {
             if (onCompletion) {
                 onCompletion(err, null);
