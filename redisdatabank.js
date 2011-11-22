@@ -97,11 +97,34 @@ RedisDatabank.prototype.update = function(type, id, value, onCompletion) {
 RedisDatabank.prototype.del = function(type, id, onCompletion) {
     this.client.del(this.toKey(type, id), function(err, count) {
         if (err) {
-            onCompletion(new DatabankError(err));
+            onCompletion(err);
         } else if (count === 0) {
             onCompletion(new NoSuchThingError(type, id));
         } else {
             onCompletion(null);
+        }
+    });
+};
+
+RedisDatabank.prototype.readAll = function(type, ids, onCompletion) {
+
+    var keys = [],
+        bank = this;
+
+    keys = ids.map(function(id) { return bank.toKey(type, id); } );
+
+    this.client.mget(keys, function(err, values) {
+        var results = {}, i = 0;
+        if (err) {
+            onCompletion(new DatabankError(err), null);
+        } else {
+            for (i = 0; i < values.length; i++) {
+                key = keys[i];
+                id = ids[i];
+                value = JSON.parse(values[i]);
+                results[id] = value;
+            }
+            onCompletion(null, results);
         }
     });
 };
