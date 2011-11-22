@@ -107,25 +107,6 @@ Databank.prototype = {
         }
     },
 
-    // Update an existing thing
-    // type: the type of thing; 'user', 'activity'
-    // id: a unique ID -- nickname or UUID or URI
-    // value: the new value of the thing
-    // onCompletion(err, value): function to call on completion
-
-    save: function(type, id, value, onCompletion)
-    {
-        this.update(type, id, value, function(err, result) {
-            if (err instanceof NoSuchThingError) {
-                this.create(type, id, value, function(err, result) {
-                    onCompletion(err, result);
-                });
-            } else {
-                onCompletion(err, result);
-            }
-        });
-    },
-
     // Delete an existing thing
     // type: the type of thing; 'user', 'activity'
     // id: a unique ID -- nickname or UUID or URI
@@ -149,6 +130,56 @@ Databank.prototype = {
     {
         if (onCompletion) {
             onCompletion(new NotImplementedError());
+        }
+    },
+
+    // Update an existing thing
+    // type: the type of thing; 'user', 'activity'
+    // id: a unique ID -- nickname or UUID or URI
+    // value: the new value of the thing
+    // onCompletion(err, value): function to call on completion
+
+    save: function(type, id, value, onCompletion)
+    {
+        this.update(type, id, value, function(err, result) {
+            if (err instanceof NoSuchThingError) {
+                this.create(type, id, value, function(err, result) {
+                    onCompletion(err, result);
+                });
+            } else {
+                onCompletion(err, result);
+            }
+        });
+    },
+
+    // Read a bunch of things from the db
+    // type: the type of thing; 'user', 'activity'
+    // id: array of IDs
+    // onCompletion(err, results): function to call on completion;
+    //    err: an error or null if none
+    //    results: map of id (maybe stringified) to value
+
+    readAll: function(type, ids, onCompletion) {
+        var results = {},
+            cnt = 0,
+            i = 0,
+            bank = this,
+            readOne = function(id) {
+                bank.read(type, id, function(err, value) {
+                    if (err) {
+                        onCompletion(err, null);
+                    } else {
+                        results[id] = value;
+                        cnt++;
+                        if (cnt === ids.length) {
+                            onCompletion(null, results);
+                        }
+                    }
+                });
+            };
+
+        for (i = 0; i < ids.length; i++) {
+            readOne(ids[i]);
         }
     }
 };
