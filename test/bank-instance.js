@@ -39,6 +39,18 @@ var bankInstanceContext = function(driver, params) {
         },
         'it has a readAll method': function(bank) {
             assert.isFunction(bank.readAll);
+        },
+        'it has an incr method': function(bank) {
+            assert.isFunction(bank.incr);
+        },
+        'it has a decr method': function(bank) {
+            assert.isFunction(bank.decr);
+        },
+        'it has an append method': function(bank) {
+            assert.isFunction(bank.append);
+        },
+        'it has a prepend method': function(bank) {
+            assert.isFunction(bank.prepend);
         }
     };
 
