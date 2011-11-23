@@ -220,3 +220,9 @@ TODO
 * Cassandra driver
 * CouchDB driver
 * On-disk driver (directory like ./database/type/id.json)
+* Convert tests to vows
+* Test for key miss on read(), del(), update()
+* Test for key clash on create()
+* Test for search(): hits, misses
+* Test for dotted notation in search()
+* Test for dotted notation in schema
