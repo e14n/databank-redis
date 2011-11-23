@@ -109,7 +109,7 @@ MongoDatabank.prototype.disconnect = function(onCompletion) {
 
 MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
 
-    var orig;
+    var toStore, pkey;
 
     if (!this.db) {
         if (onCompletion) {
@@ -118,15 +118,16 @@ MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
         return;
     }
 
-    var pkey = this.getPrimaryKey(type);
+    pkey = this.getPrimaryKey(type);
 
     if (typeof value === 'object') {
         if (!value[pkey] || value[pkey] !== id) {
             value[pkey] = id;
         }
     } else {
-        onCompletion(new NotImplementedError("MongoDatabank doesn't know how to deal with non-object values."));
-        return;
+	toStore = {value: value, mongodatabankshim: true};
+	toStore[pkey] = id;
+	value = toStore;
     }
 
     this.db.collection(type, function(err, coll) {
@@ -149,7 +150,7 @@ MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
             } else {
                 if (onCompletion) {
                     // Mongo returns an array of values
-                    onCompletion(null, newValues[0]);
+                    onCompletion(null, newValues[0].value);
                 }
             }
         });
@@ -191,6 +192,9 @@ MongoDatabank.prototype.read = function(type, id, onCompletion) {
                     onCompletion(new NoSuchThingError(type, id), null);
                 }
             } else {
+		if (value.mongodatabankshim) {
+		    value = value.value;
+		}
                 if (onCompletion) {
                     onCompletion(null, value);
                 }
@@ -207,6 +211,8 @@ MongoDatabank.prototype.read = function(type, id, onCompletion) {
 
 MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
 
+    var toStore, pkey;
+
     if (!this.db) {
         if (onCompletion) {
             onCompletion(new NotConnectedError());
@@ -214,10 +220,16 @@ MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
         return;
     }
 
-    var pkey = this.getPrimaryKey(type);
+    pkey = this.getPrimaryKey(type);
 
-    if (!value[pkey] || value[pkey] !== id) {
-        value[pkey] = id;
+    if (typeof value === 'object') {
+        if (!value[pkey] || value[pkey] !== id) {
+            value[pkey] = id;
+        }
+    } else {
+	toStore = {value: value, mongodatabankshim: true};
+	toStore[pkey] = id;
+	value = toStore;
     }
 
     this.db.collection(type, function(err, coll) {
@@ -235,6 +247,9 @@ MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
                     onCompletion(err, null);
                 }
             } else {
+		if (result.mongodatabankshim) {
+		    result = result.value;
+		}
                 if (onCompletion) {
                     onCompletion(null, result);
                 }
@@ -245,6 +260,8 @@ MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
 
 MongoDatabank.prototype.save = function(type, id, value, onCompletion) {
 
+    var toStore, pkey;
+
     if (!this.db) {
         if (onCompletion) {
             onCompletion(new NotConnectedError());
@@ -252,10 +269,16 @@ MongoDatabank.prototype.save = function(type, id, value, onCompletion) {
         return;
     }
 
-    var pkey = this.getPrimaryKey(type);
+    pkey = this.getPrimaryKey(type);
 
-    if (!value[pkey] || value[pkey] !== id) {
-        value[pkey] = id;
+    if (typeof value === 'object') {
+        if (!value[pkey] || value[pkey] !== id) {
+            value[pkey] = id;
+        }
+    } else {
+	toStore = {value: value, mongodatabankshim: true};
+	toStore[pkey] = id;
+	value = toStore;
     }
 
     this.db.collection(type, function(err, coll) {
@@ -273,6 +296,9 @@ MongoDatabank.prototype.save = function(type, id, value, onCompletion) {
                     onCompletion(err, null);
                 }
             } else {
+		if (value.mongodatabankshim) {
+		    value = value.value;
+		}
                 if (onCompletion) {
                     onCompletion(null, value);
                 }
@@ -357,6 +383,9 @@ MongoDatabank.prototype.search = function(type, criteria, onResult, onCompletion
                     if (err) {
                         lastErr = err;
                     } else {
+			if (value.mongodatabankshim) {
+			    value = value.value;
+			}
                         if (onResult) {
                             onResult(value);
                         }
