@@ -45,7 +45,8 @@ var bankInstanceContext = function(driver, params) {
     return context;
 };
 
-var suite = vows.describe('bank instantiation');
+var suite = vows.describe('bank instantiation'),
+    driver = null;
 
 for (driver in driverParams) {
     suite.addBatch(bankInstanceContext(driver, driverParams[driver]));
