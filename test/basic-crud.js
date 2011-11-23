@@ -10,6 +10,11 @@ var basicCrudContext = function(driver, params) {
 
     context["When we create a " + driver + " databank"] = {
         topic: function() {
+            params.schema = {
+                test: {
+                    pkey: 'number'
+                }
+            };
             return Databank.get(driver, params);
         },
         'We can connect to it': {
