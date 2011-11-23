@@ -122,7 +122,8 @@ Databank.prototype = {
 
     // Search for things
     // type: type of thing
-    // criteria: map of criteria, with exact matches, like {'subject.id':'tag:example.org,2011:evan' }
+    // criteria: map of criteria, with exact matches,
+    //           like {'subject.id':'tag:example.org,2011:evan' }
     // onResult(value): called once per result found
     // onCompletion(err): called once at the end of results
 
@@ -181,6 +182,54 @@ Databank.prototype = {
         for (i = 0; i < ids.length; i++) {
             readOne(ids[i]);
         }
+    },
+
+    readAndModify: function(type, id, def, modify, onCompletion) {
+        var bank = this;
+        bank.read(type, id, function(err, value) {
+            if (err) {
+                // Set to def if not exist
+                if (err instanceof NoSuchThingError) {
+                    bank.insert(type, id, def, onCompletion);
+                } else {
+                    onCompletion(err, null);
+                }
+            } else {
+                bank.update(type, id, modify(value), onCompletion);
+            }
+        });
+    },
+
+    incr: function(type, id, onCompletion) {
+        this.readAndModify(type,
+                           id,
+                           1, 
+                           function(value) { return value+1; },
+                           onCompletion);
+    },
+
+    decr: function(type, id, onCompletion) {
+        this.readAndModify(type,
+                           id,
+                           -1, 
+                           function(value) { return value-1; },
+                           onCompletion);
+    },
+
+    append: function(type, id, toAppend, onCompletion) {
+        this.readAndModify(type,
+                           id,
+                           [toAppend], 
+                           function(value) { value.push(toAppend); return value; },
+                           onCompletion);
+    },
+
+    prepend: function(type, id, toPrepend, onCompletion) {
+        this.readAndModify(type,
+                           id,
+                           [toPrepend], 
+                           function(value) { value.unshift(toPrepend); return value; },
+                           onCompletion);
     }
 };
 
