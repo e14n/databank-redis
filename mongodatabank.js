@@ -266,7 +266,7 @@ MongoDatabank.prototype.save = function(type, id, value, onCompletion) {
             }
         }
         sel[pkey] = id;
-        coll.findAndModify(sel, [['_id', 'ascending']], value, {safe: true, new: true}, function(err, result) {
+        coll.update(sel, value, {upsert: true}, function(err) {
             if (err) {
                 // FIXME: find key-miss errors and return a NotExistsError
                 if (onCompletion) {
@@ -274,7 +274,7 @@ MongoDatabank.prototype.save = function(type, id, value, onCompletion) {
                 }
             } else {
                 if (onCompletion) {
-                    onCompletion(null, result);
+                    onCompletion(null, value);
                 }
             }
         });
