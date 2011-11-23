@@ -1,99 +1,111 @@
 // Testing basic crud functionality
 
-var assert = require('assert');
+// Testing readAll() method
 
-var parseCmdLine = function(args) {
+var assert = require('assert'),
+    vows = require('vows'),
+    databank = require('../databank'),
+    Databank = databank.Databank,
+    driverParams = require('./driver-params').driverParams;
 
-    var driver = args[2] || 'disk',
-        i = 0,
-        arg = null,
-        parts = null,
-        results = {'driver': driver};
+var saveContext = function(driver, params) {
 
-    for (i = 3; i < args.length; i++) {
-        arg = args[i];
-        parts = arg.split('=', 2);
-        results[parts[0]] = parts[1];
-    }
+    var context = {};
 
-    return results;
-};
+    context["When we create a " + driver + " databank"] = {
 
-var main = function(params) {
+        topic: function() {
+            params.schema = {
+                test: {
+                    pkey: 'number'
+                }
+            };
+            return Databank.get(driver, params);
+        },
 
-    var bank = null,
-        databank = null,
-        Databank = null,
-        DatabankError = null;
-
-    console.log("Loading module");
-
-    // Get databank
-    assert.doesNotThrow(function() {
-        databank = require('../databank');
-    }, Error, "Error loading databank module");
-
-    console.log("Getting classes");
-
-    // Get Databank
-    Databank = databank.Databank;
-    DatabankError = databank.DatabankError;
-
-    assert.ok(Databank);
-    assert.ok(DatabankError);
-
-    console.log("Creating instance");
-
-    // Instantiate with factory method
-    assert.doesNotThrow(function() {
-        bank = Databank.get(params.driver, {schema: {test: {pkey: 'number'}}});
-    }, Error, "Error on get()");
-
-    assert.ok(bank);
-
-    bank.connect(params, function(err) {
-        assert.ifError(err);
-        console.log("Saving new object");
-        bank.save('test', 1, {'pass': true, 'iters': 42}, function(err, value) {
-            assert.ifError(err);
-            assert.ok(value);
-            assert.equal(typeof value, 'object');
-            assert.equal(value.pass, true);
-            assert.equal(value.iters, 42);
-            console.log("Fetching saved object");
-            bank.read('test', 1, function(err, value) {
-                console.log(err);
+        'We can connect to it': {
+            topic: function(bank) {
+                bank.connect(params, this.callback);
+            },
+            'without an error': function(err) {
                 assert.ifError(err);
-                assert.ok(value);
-                assert.equal(typeof value, 'object');
-                assert.equal(value.pass, true);
-                assert.equal(value.iters, 42);
-                console.log("Saving altered object");
-                bank.save('test', 1, {'pass': true, 'iters': 43}, function(err, value) {
+            },
+            'and we can save an item': {
+                topic: function(bank) {
+                    bank.save('test', 1, {'pass': true, 'iters': 42}, this.callback); 
+                },
+                'without an error': function(err, value) {
                     assert.ifError(err);
                     assert.ok(value);
-                    assert.equal(typeof value, 'object');
+                    assert.isObject(value);
                     assert.equal(value.pass, true);
-                    assert.equal(value.iters, 43);
-                    console.log("Fetching altered object");
-                    bank.read('test', 1, function(err, value) {
+                    assert.equal(value.iters, 42);
+                },
+                'and we can fetch it': {
+                    topic: function(created, bank) {
+                        bank.read('test', 1, this.callback);
+                    },
+                    'without an error': function(err, value) {
                         assert.ifError(err);
-                        assert.ok(value);
-                        assert.equal(typeof value, 'object');
+                        assert.isObject(value);
                         assert.equal(value.pass, true);
-                        assert.equal(value.iters, 43);
-                        console.log("Deleting object");
-                        bank.del('test', 1, function(err) {
+                        assert.equal(value.iters, 42);
+                    },
+                    'and we can save it again': {
+                        topic: function(read, created, bank) {
+                            bank.save('test', 1, {'pass': true, 'iters': 43}, this.callback);
+                        },
+                        'without an error': function(err, value) {
                             assert.ifError(err);
-                            bank.disconnect(function(err) {
+                            assert.ok(value);
+                            assert.equal(typeof value, 'object');
+                            assert.equal(value.pass, true);
+                            assert.equal(value.iters, 43);
+                        },
+                        'and we can read it again': {
+                            topic: function(updated, read, created, bank) {
+                                bank.read('test', 1, this.callback);
+                            },
+                            'without an error': function(err, value) {
                                 assert.ifError(err);
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    });
+                                assert.ok(value);
+                                assert.equal(typeof value, 'object');
+                                assert.equal(value.pass, true);
+                                assert.equal(value.iters, 43);
+                            },
+                            'and we can delete it': {
+                                topic: function(readAgain, updated, read, created, bank) {
+                                    bank.del('test', 1, this.callback);
+                                },
+                                'without an error': function(err) {
+                                    assert.ifError(err);
+                                },
+                                'and we can disconnect': {
+                                    topic: function(readAgain, updated, read, created, bank) {
+                                        bank.disconnect(this.callback);
+                                    },
+                                    'without an error': function(err) {
+                                        assert.ifError(err);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    return context;
 };
 
-main(parseCmdLine(process.argv));
+
+
+var suite = vows.describe('save'),
+    driver = null;
+
+for (driver in driverParams) {
+    suite.addBatch(saveContext(driver, driverParams[driver]));
+}
+
+suite.export(module);
