@@ -148,9 +148,13 @@ MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
                     }
                 }
             } else {
+                // Mongo returns an array of values
+		value = newValues[0];
+		if (value.mongodatabankshim) {
+		    value = value.value;
+		}
                 if (onCompletion) {
-                    // Mongo returns an array of values
-                    onCompletion(null, newValues[0].value);
+                    onCompletion(null, value);
                 }
             }
         });
