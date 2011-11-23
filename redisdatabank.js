@@ -129,4 +129,34 @@ RedisDatabank.prototype.readAll = function(type, ids, onCompletion) {
     });
 };
 
+RedisDatabank.prototype.incr = function(type, id, onCompletion) {
+    this.client.incr(this.toKey(type, id), onCompletion);
+};
+
+RedisDatabank.prototype.decr = function(type, id, onCompletion) {
+    this.client.decr(this.toKey(type, id), onCompletion);
+};
+
+RedisDatabank.prototype.append = function(type, id, value, onCompletion) {
+    var bank = this;
+    bank.client.rpush(bank.toKey(type, id), value, function(err, count) {
+	if (err) {
+	    onCompletion(err, null);
+	} else {
+	    bank.read(type, id, onCompletion);
+	}
+    });
+};
+
+RedisDatabank.prototype.prepend = function(type, id, value, onCompletion) {
+    var bank = this;
+    bank.client.lpush(bank.toKey(type, id), value, function(err, count) {
+	if (err) {
+	    onCompletion(err, null);
+	} else {
+	    bank.read(type, id, onCompletion);
+	}
+    });
+};
+
 exports.RedisDatabank = RedisDatabank;
