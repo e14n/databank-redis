@@ -109,7 +109,7 @@ MongoDatabank.prototype.disconnect = function(onCompletion) {
 
 MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
 
-    var toStore, pkey;
+    var wrapper, pkey;
 
     if (!this.db) {
         if (onCompletion) {
@@ -120,14 +120,14 @@ MongoDatabank.prototype.create = function(type, id, value, onCompletion) {
 
     pkey = this.getPrimaryKey(type);
 
-    if (typeof value === 'object') {
+    if (typeof value === 'object' && !(value instanceof Array)) {
         if (!value[pkey] || value[pkey] !== id) {
             value[pkey] = id;
         }
     } else {
-	toStore = {value: value, mongodatabankshim: true};
-	toStore[pkey] = id;
-	value = toStore;
+	wrapper = {value: value, mongodatabankshim: true};
+	wrapper[pkey] = id;
+	value = wrapper;
     }
 
     this.db.collection(type, function(err, coll) {
@@ -215,7 +215,7 @@ MongoDatabank.prototype.read = function(type, id, onCompletion) {
 
 MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
 
-    var toStore, pkey;
+    var wrapper, pkey;
 
     if (!this.db) {
         if (onCompletion) {
@@ -226,14 +226,14 @@ MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
 
     pkey = this.getPrimaryKey(type);
 
-    if (typeof value === 'object') {
+    if (typeof value === 'object' && !(value instanceof Array)) {
         if (!value[pkey] || value[pkey] !== id) {
             value[pkey] = id;
         }
     } else {
-	toStore = {value: value, mongodatabankshim: true};
-	toStore[pkey] = id;
-	value = toStore;
+	wrapper = {value: value, mongodatabankshim: true};
+	wrapper[pkey] = id;
+	value = wrapper;
     }
 
     this.db.collection(type, function(err, coll) {
@@ -264,7 +264,7 @@ MongoDatabank.prototype.update = function(type, id, value, onCompletion) {
 
 MongoDatabank.prototype.save = function(type, id, value, onCompletion) {
 
-    var toStore, pkey;
+    var wrapper, pkey;
 
     if (!this.db) {
         if (onCompletion) {
@@ -275,14 +275,14 @@ MongoDatabank.prototype.save = function(type, id, value, onCompletion) {
 
     pkey = this.getPrimaryKey(type);
 
-    if (typeof value === 'object') {
+    if (typeof value === 'object' && !(value instanceof Array)) {
         if (!value[pkey] || value[pkey] !== id) {
             value[pkey] = id;
         }
     } else {
-	toStore = {value: value, mongodatabankshim: true};
-	toStore[pkey] = id;
-	value = toStore;
+	wrapper = {value: value, mongodatabankshim: true};
+	wrapper[pkey] = id;
+	value = wrapper;
     }
 
     this.db.collection(type, function(err, coll) {
