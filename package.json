@@ -6,7 +6,7 @@
     "dependencies": {
         "vows": "0.5.13", 
         "redis": "0.7.1",
-        "mongodb": "0.9.6-23"
+        "mongodb": "0.9.7"
     },
     "repository": { "type":  "git",
                     "url":   "http://github.com/evanp/databank.git" }
