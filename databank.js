@@ -142,9 +142,11 @@ Databank.prototype = {
 
     save: function(type, id, value, onCompletion)
     {
-        this.update(type, id, value, function(err, result) {
+        var bank = this;
+
+        bank.update(type, id, value, function(err, result) {
             if (err instanceof NoSuchThingError) {
-                this.create(type, id, value, function(err, result) {
+                bank.create(type, id, value, function(err, result) {
                     onCompletion(err, result);
                 });
             } else {
