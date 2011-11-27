@@ -5,5 +5,8 @@ exports.driverParams = {
         dbname: 'test'
     },
     'redis': {
+    },
+    'disk': {
+        dir: '/tmp/diskdatabank/'
     }
 };
