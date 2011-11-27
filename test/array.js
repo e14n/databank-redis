@@ -115,8 +115,6 @@ var arrayContext = function(driver, params) {
     return context;
 };
 
-
-
 var suite = vows.describe('array values'),
     driver = null;
 
