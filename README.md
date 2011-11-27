@@ -215,14 +215,15 @@ This is a subclass of `Error` for stuff that went wrong with a
 TODO
 ----
 
-* Riak driver
 * LevelDB driver
+* Membase driver
+* Riak driver
 * Cassandra driver
 * CouchDB driver
-* On-disk driver (directory like ./database/type/id.json)
-* Convert tests to vows
 * Test for key miss on read(), del(), update()
 * Test for key clash on create()
 * Test for search(): hits, misses
 * Test for dotted notation in search()
 * Test for dotted notation in schema
+* Benchmark test with medium-sized (10^5 or 10^6) dataset
+* Better support for automated internal keys (object ID in MongoDB or CouchDB)
