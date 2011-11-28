@@ -386,7 +386,7 @@ MongoDatabank.prototype.search = function(type, criteria, onResult, onCompletion
                 cursor.each(function(err, value) {
                     if (err) {
                         lastErr = err;
-                    } else {
+                    } else if (value) {
 			if (value.mongodatabankshim) {
 			    value = value.value;
 			}
