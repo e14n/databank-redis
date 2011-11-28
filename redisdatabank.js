@@ -130,6 +130,35 @@ RedisDatabank.prototype.readAll = function(type, ids, onCompletion) {
     });
 };
 
+RedisDatabank.prototype.search = function(type, criteria, onResult, onCompletion) {
+    var bank = this;
+    // FIXME: use indices to make this less horrific
+    bank.client.keys(type + ':*', function(err, keys) {
+        var i, cnt = 0, hadErr;
+        if (err) {
+            onCompletion(err);
+        } else {
+            for (i in keys) {
+                bank.client.get(keys[i], function(err, value) {
+                    if (err) {
+                        hadErr = true;
+                        onCompletion(err);
+                    } else if (!hadErr) {
+                        if (bank.matchesCriteria(value, criteria)) {
+                            onResult(value);
+                        }
+                        cnt++;
+                        if (cnt == keys.length) {
+                            // last one out turn off the lights
+                            onCompletion(null);
+                        }
+                    }
+                });
+            }
+        }
+    });
+};
+
 RedisDatabank.prototype.incr = function(type, id, onCompletion) {
     this.client.incr(this.toKey(type, id), onCompletion);
 };
