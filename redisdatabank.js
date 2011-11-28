@@ -114,7 +114,8 @@ RedisDatabank.prototype.readAll = function(type, ids, onCompletion) {
     keys = ids.map(function(id) { return bank.toKey(type, id); } );
 
     this.client.mget(keys, function(err, values) {
-        var results = {}, i = 0;
+        var results = {}, i = 0, key, id, value;
+        
         if (err) {
             onCompletion(new DatabankError(err), null);
         } else {
