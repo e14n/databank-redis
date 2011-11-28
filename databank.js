@@ -232,6 +232,29 @@ Databank.prototype = {
                            [toPrepend], 
                            function(value) { value.unshift(toPrepend); return value; },
                            onCompletion);
+    },
+    
+    // utility for searches
+
+    matchesCriteria: function(value, criteria) {
+        var property,
+            deepProperty = function(object, property) {
+                var i = property.indexOf('.');
+                if (!object) {
+                    return null;
+                } else if (i == -1) { // no dots
+                    return object[property];
+                } else {
+                    return deepProperty(object[property.substr(0, i)], property.substr(i + 1));
+                }
+            };
+
+        for (property in criteria) {
+            if (deepProperty(value, property) != criteria[property]) {
+                return false;
+            }
+        }
+        return true;
     }
 };
 
