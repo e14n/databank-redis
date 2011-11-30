@@ -4,7 +4,7 @@
 
 var assert = require('assert'),
     vows = require('vows'),
-    databank = require('../databank'),
+    databank = require('../lib/databank'),
     Databank = databank.Databank,
     driverParams = require('./driver-params').driverParams;
 
