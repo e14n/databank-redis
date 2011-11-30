@@ -230,13 +230,5 @@ This is a subclass of `Error` for stuff that went wrong with a
 TODO
 ----
 
-* LevelDB driver
-* Membase driver
-* Riak driver
-* Cassandra driver
-* CouchDB driver
-* Test for key miss on read(), del(), update()
-* Test for key clash on create()
-* Test for dotted notation in schema
-* Benchmark test with medium-sized (10^5 or 10^6) dataset
-* Better support for automated internal keys (object ID in MongoDB or CouchDB)
+See https://github.com/evanp/databank/issues
+
