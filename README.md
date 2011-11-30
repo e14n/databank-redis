@@ -168,6 +168,13 @@ The databank interface has these methods:
   property names to exact value matches. `onResult` is called one time
   for each result, with a single argument, the object that matches the
   criteria. Use a collector array if you want all the results in an array.
+  
+  Property names can be dotted to indicate deeper structures; for
+  example, this object:
+  
+	{name: {last: "Prodromou", first: "Evan"}, age: 43}
+
+  would match the criteria `{"name.last": "Prodromou"}`.
 
   `onCompletion` takes one argument, a `DatabankError`. A search with
   no results will get a `NoSuchThingError`. I think this is the method
@@ -202,7 +209,7 @@ This is a subclass of `Error` for stuff that went wrong with a
 
 * `NotImplementedError`
   
-  That doesn't work.
+  That doesn't work (yet).
 
 * `NoSuchThingError`
 
@@ -211,6 +218,14 @@ This is a subclass of `Error` for stuff that went wrong with a
 * `AlreadyExistsError`
 
   The type/id pair you were trying to create *does* exist.
+
+* `NotConnectedError`
+
+  You forgot to call `connect` first.
+
+* `AlreadyConnectedError`
+
+  You already called `connect`.
 
 TODO
 ----
@@ -222,8 +237,6 @@ TODO
 * CouchDB driver
 * Test for key miss on read(), del(), update()
 * Test for key clash on create()
-* Test for search(): hits, misses
-* Test for dotted notation in search()
 * Test for dotted notation in schema
 * Benchmark test with medium-sized (10^5 or 10^6) dataset
 * Better support for automated internal keys (object ID in MongoDB or CouchDB)
