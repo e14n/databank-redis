@@ -6,7 +6,7 @@ var assert = require('assert'),
 vows.describe('databank module interface').addBatch({
     'When we require the databank module': {
         topic: function() { 
-            return require('../databank');
+            return require('../lib/databank');
         },
         'we get a module back': function(databank) {
             assert.ok(databank);

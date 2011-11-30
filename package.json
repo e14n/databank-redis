@@ -1,8 +1,9 @@
 {
     "name": "databank",
-    "description": "Deployment-time-binding of JSON storage engine",
+    "main": "./lib/databank.js",
+    "description": "Abstraction layer for JSON storage",
     "author": "Evan Prodromou <evan@status.net>",
-    "version": "0.1.0dev",
+    "version": "0.1.0",
     "dependencies": {
         "vows": "0.5.13", 
         "redis": "0.7.1",
