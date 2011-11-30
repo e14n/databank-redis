@@ -21,7 +21,8 @@ var databank = require('./databank'),
     DatabankError = databank.DatabankError,
     AlreadyExistsError = databank.AlreadyExistsError,
     NoSuchThingError = databank.NoSuchThingError,
-    fs = require('fs');
+    fs = require('fs'),
+    path = require('path');
 
 var DiskDatabank = function(params) {
     this.dir = params.dir || '/var/lib/diskdatabank/';
@@ -166,6 +167,53 @@ DiskDatabank.prototype.ensureDir = function(dir, onCompletion) {
     } else {
         ensureOne(dir, onCompletion);
     }
+};
+
+DiskDatabank.prototype.search = function(type, criteria, onResult, onCompletion) {
+    var bank = this,
+	counter = 0,
+	walk = function(dirname) { // originally from https://gist.github.com/514983
+	    counter += 1;
+	    fs.readdir(dirname, function(err, relnames) {
+		if(err) {
+		    onCompletion(err);
+		    return;
+		}
+		relnames.forEach(function(relname, index, relnames) {
+		    var name = path.join(dirname, relname);
+		    counter += 1;
+		    fs.stat(name, function(err, stat) {
+			if(err) {
+			    onCompletion(err);
+			    return;
+			}
+			if(stat.isDirectory()) {
+			    walk(name);
+			} else {
+			    fs.readFile(name, function(err, data) {
+				var value;
+				if (err) {
+				    onCompletion(err);
+				    return;
+				} else {
+				    value = JSON.parse(data);
+				    if (bank.matchesCriteria(value, criteria)) {
+					onResult(value);
+				    }
+				}
+			    });
+			}
+			counter -= 1;
+			if(index === relnames.length - 1) counter -= 1;
+			if(counter === 0) {
+			    onCompletion(null);
+			}
+		    });
+		});
+	    });
+	};
+    
+    walk(bank.dir + '/' + type);
 };
 
 exports.DiskDatabank = DiskDatabank;
