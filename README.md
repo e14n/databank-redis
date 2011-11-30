@@ -35,12 +35,12 @@ Schemata
 --------
 
 This library assumes you have document "types" - like "person",
-"table", "photo", "bankaccount", "trainreservation" -- that you can
+"chair", "photo", "bankaccount", "trainreservation" -- that you can
 identify with a unique scalar key -- email address, URL, UUID, SSN, or
 whatever.
 
 Your "document" is anything that can be JSON-encoded and
-decoded. Scalar, array and tree values are all totally cool.
+decoded. Scalar, array and object/tree values are all totally cool.
 
 Implementation classes that support schemata should support a "schema"
 element on the constructor params for `Databank.get()` (see below). A
