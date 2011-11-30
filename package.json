@@ -1,13 +1,16 @@
 {
     "name": "databank",
-    "main": "./lib/databank.js",
-    "description": "Abstraction layer for JSON storage",
-    "author": "Evan Prodromou <evan@status.net>",
     "version": "0.1.0",
+    "engines": { "node": "~0.6.x" },
+    "author": "Evan Prodromou <evan@status.net>",
+    "scripts": {"test": "vows test/*"},
+    "main": "./lib/databank.js",
+    "directories": {"lib": "./lib/"},
+    "description": "Abstraction layer for JSON storage",
     "dependencies": {
-        "vows": "0.5.13", 
-        "redis": "0.7.1",
-        "mongodb": "0.9.7"
+        "vows": "~0.5.x", 
+        "redis": "~0.7.x",
+        "mongodb": "~0.9.x"
     },
     "repository": { "type":  "git",
                     "url":   "http://github.com/evanp/databank.git" }
