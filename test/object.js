@@ -50,6 +50,8 @@ var objectContext = function(driver, params) {
                         assert.ok(evan);
                         assert.ok(evan.del);
                         assert.ok(evan.save);
+                        assert.ok(evan.update);
+                        assert.ok(evan.insert);
                         assert.equal(evan.username, 'evanp');
                         assert.ok(evan.name);
                         assert.equal(evan.name.last, 'Prodromou');
