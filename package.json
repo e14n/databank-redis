@@ -1,10 +1,10 @@
 {
     "name": "databank",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "engines": { "node": "~0.6.x" },
     "author": "Evan Prodromou <evan@status.net>",
     "scripts": {"test": "vows test/*"},
-    "main": "./lib/databank.js",
+    "main": "./lib/index.js",
     "directories": {"lib": "./lib/"},
     "description": "Abstraction layer for JSON storage",
     "dependencies": {
