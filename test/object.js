@@ -38,6 +38,7 @@ var objectContext = function(driver, params) {
                     assert.ok(Person.get);
                     assert.ok(Person.search);
                     assert.ok(Person.pkey);
+                    assert.ok(Person.create);
                     assert.ok(Person.bank());
                     assert.equal(Person.type, 'person');
                     assert.equal(Person.pkey(), 'username');
@@ -51,7 +52,6 @@ var objectContext = function(driver, params) {
                         assert.ok(evan.del);
                         assert.ok(evan.save);
                         assert.ok(evan.update);
-                        assert.ok(evan.insert);
                         assert.equal(evan.username, 'evanp');
                         assert.ok(evan.name);
                         assert.equal(evan.name.last, 'Prodromou');
