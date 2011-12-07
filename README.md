@@ -227,6 +227,68 @@ This is a subclass of `Error` for stuff that went wrong with a
 
   You already called `connect`.
 
+DatabankObject
+==============
+
+This is a utility class for objects you want to store in a
+Databank. To create the class, do this:
+
+    var MyClass = DatabankObject.subClass('mytype');
+
+This will make an object class that stores data in the 'mytype'
+type. You can add more stuff to the class, of course.
+
+The class's `type` is stored in `MyClass.type`.
+
+The constructor takes an object as a parameter; it will copy all its
+properties from this object. Good for "classifying" JSON. So:
+
+    var json = getSomeJSONfromSomewhere();
+    var myInst = new MyClass(json);
+
+Each class has the following class methods:
+
+* `bank()`
+
+Gets the class's databank. Used internally for making queries. By
+default, gets the DatabankObject.bank property. If you want to change
+how this works, replace this function with... something else.
+
+* `pkey()`
+
+Gets the class's primary key. By default, uses the bank's schema to
+figure this out; replace this method to do it some other way.
+
+* `get(id, callback)`
+
+Get the object with primary key `id` and returns it to the `callback`.
+
+* `search(criteria, callback)`
+
+Does a search for objects matching the criteria, collects them, and
+returns an array to `callback`.
+
+* `create(properties, callback)`
+
+Creates a new instance of class with `properties` and returns it to callback. 
+
+Each instance has the following methods:
+
+* `update(properties, callback)`
+
+For an existing object, update to the provided properties, and return
+the resulting object to `callback`. Note that you can use only a few
+properties; note that you can't use this method to _remove_ properties.
+
+* `del(callback)`
+
+Delete the object. `callback` takes a single error arg.
+
+* `save(callback)`
+
+Save the current state of the object, and return it to
+`callback`. Will create new objects or update existing ones.
+
 TODO
 ----
 
