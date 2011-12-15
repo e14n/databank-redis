@@ -67,44 +67,54 @@ var searchContext = function(driver, params) {
                                 'without an error': function(err) {
                                     assert.ifError(err);
                                 },
-                                'and we can delete the last person': {
+				'and we can search with no expected results': {
                                     topic: function(abe, stav, evan, bank) {
-                                        bank.del('person', 'abe', this.callback);
+					var results = [], onResult = function(result) { results.push(result); };
+
+					bank.search('person', {'age': -1}, onResult, this.callback);
                                     },
                                     'without an error': function(err) {
-                                        assert.ifError(err);
+					assert.ifError(err);
                                     },
-                                    'and we can delete the second person': {
-                                        topic: function(abe, stav, evan, bank) {
-                                            bank.del('person', 'stav', this.callback);
-                                        },
-                                        'without an error': function(err) {
+                                    'and we can delete the last person': {
+					topic: function(abe, stav, evan, bank) {
+                                            bank.del('person', 'abe', this.callback);
+					},
+					'without an error': function(err) {
                                             assert.ifError(err);
-                                        },
-                                        'and we can delete the first person': {
+					},
+					'and we can delete the second person': {
                                             topic: function(abe, stav, evan, bank) {
-                                                bank.del('person', 'evanp', this.callback);
+						bank.del('person', 'stav', this.callback);
                                             },
                                             'without an error': function(err) {
-                                                assert.ifError(err);
+						assert.ifError(err);
                                             },
-                                            'and we can disconnect': {
-                                                topic: function(abe, stav, evan, bank) {
-                                                    bank.disconnect(this.callback);
-                                                },
-                                                'without an error': function(err) {
+                                            'and we can delete the first person': {
+						topic: function(abe, stav, evan, bank) {
+                                                    bank.del('person', 'evanp', this.callback);
+						},
+						'without an error': function(err) {
                                                     assert.ifError(err);
-                                                }
+						},
+						'and we can disconnect': {
+                                                    topic: function(abe, stav, evan, bank) {
+							bank.disconnect(this.callback);
+                                                    },
+                                                    'without an error': function(err) {
+							assert.ifError(err);
+                                                    }
+						}
                                             }
-                                        }
+					}
                                     }
-                                }
+				}
                             }
-                        }
+			}
                     }
-                }
+		}
             }
-        }
+	}
     };
     
     return context;
