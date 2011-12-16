@@ -2,7 +2,7 @@ exports.driverParams = {
     'mongo': {
         host: 'localhost',
         port: 27017,
-        dbname: 'test'
+        dbname: 'databanktest'
     },
     'redis': {
     },
@@ -12,5 +12,7 @@ exports.driverParams = {
     'membase': {
         serverLocations: '127.0.0.1:11211',
         options: {}
+    },
+    'memory': {
     }
 };
