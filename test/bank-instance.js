@@ -51,6 +51,12 @@ var bankInstanceContext = function(driver, params) {
         },
         'it has a prepend method': function(bank) {
             assert.isFunction(bank.prepend);
+        },
+        'it has an item method': function(bank) {
+            assert.isFunction(bank.item);
+        },
+        'it has a slice method': function(bank) {
+            assert.isFunction(bank.slice);
         }
     };
 

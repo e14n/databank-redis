@@ -1,4 +1,4 @@
-// Test CRUD for scalars
+// Test CRUD + append, prepend, item, slice for arrays
 
 var assert = require('assert'),
     vows = require('vows'),
@@ -87,20 +87,40 @@ var arrayContext = function(driver, params) {
 					assert.equal(value.length, 6);
 					assert.deepEqual(value, [0, 1, 2, 3, 4, 5]);
 				    },
-				    'and we can delete it': {
+				    'and we can get a single item': {
 					topic: function(appended, prepended, readAgain, updated, read, created, bank) {
-					    bank.del('inbox', 'evanp', this.callback);
+					    bank.item('inbox', 'evanp', 2, this.callback);
 					},
-					'without an error': function(err) {
+					'without an error': function(err, value) {
 					    assert.ifError(err);
+					    assert.equal(value, 2);
 					},
-					'and we can disconnect': {
-					    topic: function(appended, prepended, readAgain, updated, read, created, bank) {
-						bank.disconnect(this.callback);
+					'and we can get a slice': {
+					    topic: function(item, appended, prepended, readAgain, updated, read, created, bank) {
+					        bank.slice('inbox', 'evanp', 1, 3, this.callback);
 					    },
-					    'without an error': function(err) {
+					    'without an error': function(err, value) {
 						assert.ifError(err);
-					    }
+					        assert.isArray(value);
+					        assert.equal(value.length, 2);
+					        assert.deepEqual(value, [1, 2]);
+					    },
+					    'and we can delete it': {
+					        topic: function(slice, item, appended, prepended, readAgain, updated, read, created, bank) {
+					            bank.del('inbox', 'evanp', this.callback);
+					        },
+					        'without an error': function(err) {
+						    assert.ifError(err);
+                                                },
+                                                'and we can disconnect': {
+					            topic: function(slice, item, appended, prepended, readAgain, updated, read, created, bank) {
+					                bank.disconnect(this.callback);
+                                                    },
+					            'without an error': function(err) {
+						        assert.ifError(err);
+                                                    }
+                                                }
+                                            }
 					}
 				    }
                                 }
