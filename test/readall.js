@@ -60,7 +60,7 @@ var readAllContext = function(driver, params) {
                         },
                         'and we can read them all back': {
                             topic: function(result4, result3, result2, bank) {
-                                bank.readAll('test', [2, 3, 4], this.callback);
+                                bank.readAll('test', [2, 3, 4, 'nonexistent'], this.callback);
                             },
                             'without an error': function(err, results) {
                                 assert.ifError(err);
@@ -74,6 +74,7 @@ var readAllContext = function(driver, params) {
                                 assert.isObject(results[4]);
                                 assert.equal(results[4].pass, false);
                                 assert.equal(results[4].iters, 109);
+                                assert.equal(results['nonexistent'], null);
                             },
                             'and we can delete the most recent': {
                                 topic: function(results, result4, result3, result2, bank) {
