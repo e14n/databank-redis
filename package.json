@@ -8,7 +8,7 @@
     "directories": {"lib": "./lib/"},
     "description": "Abstraction layer for JSON storage",
     "dependencies": {
-        "vows": "~0.5.x", 
+        "vows": "0.6.x", 
         "redis": "~0.7.x",
         "mongodb": "~0.9.x",
         "memcached": "~0.0.x"        
