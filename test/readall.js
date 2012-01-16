@@ -74,7 +74,7 @@ var readAllContext = function(driver, params) {
                                 assert.isObject(results[4]);
                                 assert.equal(results[4].pass, false);
                                 assert.equal(results[4].iters, 109);
-                                assert.equal(results['nonexistent'], null);
+                                assert.isNull(results['nonexistent']);
                             },
                             'and we can delete the most recent': {
                                 topic: function(results, result4, result3, result2, bank) {
