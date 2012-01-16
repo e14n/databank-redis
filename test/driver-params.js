@@ -14,5 +14,9 @@ exports.driverParams = {
         host: 'localhost',
         port: 27017,
         dbname: 'databanktest'
+    },
+    'caching': {
+	'cache': {driver: 'memory', params: {}},
+	'source': {driver: 'disk', params: {dir: '/tmp/cachingdisk/'}}
     }
 };
