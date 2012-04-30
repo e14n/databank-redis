@@ -1,6 +1,6 @@
 {
     "name": "databank",
-    "version": "0.8.3",
+    "version": "0.8.4",
     "engines": { "node": "~0.6.x" },
     "author": "Evan Prodromou <evan@status.net>",
     "scripts": {"test": "vows test/*"},
