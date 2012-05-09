@@ -256,8 +256,12 @@ how this works, replace this function with... something else.
 
 * `pkey()`
 
-Gets the class's primary key. By default, uses the bank's schema to
-figure this out; replace this method to do it some other way.
+Gets the class's primary key. By default, looks for a class attribute
+"schema" and tries to get the "pkey" element of that. Otherwise, it
+checks the class's schema, looks for an element that matches the type
+name, and tries to get pkey element of that. If that fails, it looks
+at the class's databank's "schema", and tries to get that. Otherwise,
+it just returns "id". Override if you have a better plan.
 
 * `get(id, callback)`
 
