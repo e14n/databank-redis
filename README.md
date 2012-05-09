@@ -276,6 +276,11 @@ returns an array to `callback`.
 
 Creates a new instance of class with `properties` and returns it to callback. 
 
+* `readAll(ids, callback)`
+
+Reads all objects from the databank with the given array of
+primary-key ids, and returns a map of {id: object}.
+
 Each instance has the following methods:
 
 * `update(properties, callback)`
@@ -292,6 +297,8 @@ Delete the object. `callback` takes a single error arg.
 
 Save the current state of the object, and return it to
 `callback`. Will create new objects or update existing ones.
+
+Hooks
 
 TODO
 ----
