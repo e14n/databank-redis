@@ -14,8 +14,7 @@ I chose the name "databank" since it's not in widespread use and won't
 cause name conflicts, and because it sounds like something a 1960s
 robot would say.
 
-License
--------
+# License
 
 Copyright 2011, 2012, StatusNet Inc.
 
@@ -31,8 +30,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Schemata
---------
+# Schemata
 
 This library assumes you have document "types" - like "person",
 "chair", "photo", "bankaccount", "trainreservation" -- that you can
@@ -51,8 +49,7 @@ schema can have elements for each type, with the following elements:
 * indices: array of element names that should be indexed. You should
   really have an index on each element you search on frequently.
 
-Dotted notation
-===============
+## Dotted notation
 
 In schemata you can use dotted-notation, a la MongoDB, to define
 fields that are part of parts of the object. For example, for an
@@ -64,8 +61,7 @@ object like this:
 
     { person: { pkey: "email", indices: ["name.last"] } }
 
-Databank
-========
+# Databank
 
 The class has a single static method for for initializing an instance:
 
@@ -201,8 +197,7 @@ The databank interface has these methods:
                     });
     }
 
-DatabankError
-=============
+# DatabankError
 
 This is a subclass of `Error` for stuff that went wrong with a
 `Databank`. Subclasses include:
@@ -227,8 +222,7 @@ This is a subclass of `Error` for stuff that went wrong with a
 
   You already called `connect`.
 
-DatabankObject
-==============
+# DatabankObject
 
 This is a utility class for objects you want to store in a
 Databank. To create the class, do this:
@@ -298,7 +292,74 @@ Delete the object. `callback` takes a single error arg.
 Save the current state of the object, and return it to
 `callback`. Will create new objects or update existing ones.
 
-Hooks
+## Hooks
+
+When I started using this library, I found myself overloading the
+create(), update(), and save() methods to do extra things, like add an
+auto-generated ID or timestamp, or to expand attributes stored by
+reference. It was a little tricky, since I had to save off the default
+auto-created function, then define a new function that called that
+saved one.
+
+To make this easier, I added a hooks mechanism. Now, every
+DatabankObject subclass has the option of hooking certain
+functionality without having to replicate the core
+functionality. Default values are all no-ops.
+
+Class methods:
+
+* `beforeCreate(props, callback)`
+
+Called before `create()`. A chance to add default values
+or validate. `callback` takes two args: an err, or the (possibly
+modified) props.
+
+* `beforeGet(id, callback)`
+
+Called before `create()`. I don't see a lot of reason to mess with
+this, but it's here if you need it. `callback` takes two args: an err,
+or the (possibly modified) id.
+
+Instance methods:
+
+* `afterCreate(callback)`
+
+Called after `create()`. Good chance to save references. `callback`
+takes one arg: an err.
+
+* `afterGet(callback)`
+
+Called after `get()`. Good chance to expand references. `callback`
+takes one arg: an err.
+
+* `beforeUpdate(props, callback)`
+
+Called before `update()`. Validate, preserve immutables, or add
+auto-generated properties. `callback` takes two args: an err and the
+(possibly modified) props.
+
+* `afterUpdate(callback)`
+
+Called after `update()`. `callback` takes one arg: an err.
+
+* `beforeDel(callback)`
+
+Called before `del()`. Maybe prevent deleting something important?
+Referential integrity? `callback` takes one arg: an err.
+
+* `afterDel(callback)`
+
+Called after `del()`. Delete related stuff? `callback` takes one arg:
+an err.
+
+* `beforeSave(callback)`
+
+Called before `save()`. Validate, preserve, autogenerate. `callback`
+takes one args: an err.
+
+* `afterSave(callback)`
+
+Called after `save()`. `callback` takes one args: an err.
 
 TODO
 ----
