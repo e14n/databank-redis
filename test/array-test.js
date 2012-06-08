@@ -105,23 +105,47 @@ var arrayContext = function(driver, params) {
 					        assert.equal(value.length, 2);
 					        assert.deepEqual(value, [1, 2]);
 					    },
-					    'and we can delete it': {
-					        topic: function(slice, item, appended, prepended, readAgain, updated, read, created, bank) {
-					            bank.del('inbox', 'evanp', this.callback);
-					        },
-					        'without an error': function(err) {
-						    assert.ifError(err);
+                                            'and we can get the indexOf an item': {
+                                                topic: function(slice, item, appended, prepended, readAgain, updated, read, created, bank) {
+                                                    bank.indexOf('inbox', 'evanp', 2, this.callback);
                                                 },
-                                                'and we can disconnect': {
-					            topic: function(slice, item, appended, prepended, readAgain, updated, read, created, bank) {
-					                bank.disconnect(this.callback);
+                                                'without an error': function(err, index) {
+                                                    assert.ifError(err);
+                                                    assert.equal(index, 2);
+                                                },
+                                                'and we can remove an item': {
+					            topic: function(index, slice, item, appended, prepended, readAgain, updated, read, created, bank) {
+                                                        bank.remove('inbox', 'evanp', 3, this.callback);
                                                     },
-					            'without an error': function(err) {
-						        assert.ifError(err);
-                                                    }
+                                                    'without an error': function(err) {
+                                                        assert.ifError(err);
+                                                    },
+                                                    'and we can read again': {
+					                topic: function(index, slice, item, appended, prepended, readAgain, updated, read, created, bank) {
+                                                            bank.read('inbox', 'evanp', this.callback);
+                                                        },
+                                                        'without an error': function(err, box) {
+                                                            assert.ifError(err);
+                                                            assert.deepEqual(box, [0, 1, 2, 4, 5]);
+                                                        },
+					                'and we can delete it': {
+					                    topic: function(readAgainAgain, index, slice, item, appended, prepended, readAgain, updated, read, created, bank) {
+					                        bank.del('inbox', 'evanp', this.callback);
+					                    },
+					                    'without an error': function(err) {
+						                assert.ifError(err);
+                                                            },
+                                                            'and we can disconnect': {
+					                        topic: function(readAgainAgain, index, slice, item, appended, prepended, readAgain, updated, read, created, bank) {
+					                            bank.disconnect(this.callback);
+                                                                },
+					                        'without an error': function(err) {
+						                    assert.ifError(err);
+                                                                }
+                                                            }
+                                                        }
+					            }
                                                 }
-                                            }
-					}
 				    }
                                 }
                             }
