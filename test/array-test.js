@@ -146,6 +146,8 @@ var arrayContext = function(driver, params) {
                                                         }
 					            }
                                                 }
+                                            }
+                                        }
 				    }
                                 }
                             }
