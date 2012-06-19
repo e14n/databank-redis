@@ -1,6 +1,6 @@
 {
     "name": "databank",
-    "version": "0.10.2",
+    "version": "0.11.0",
     "engines": { "node": "~0.6.x" },
     "author": "Evan Prodromou <evan@status.net>",
     "scripts": {"test": "vows test/*-test.js"},
@@ -12,7 +12,7 @@
         "redis": "~0.7.x",
         "mongodb": "~0.9.x",
         "memcached": "~0.0.x",        
-        "step": "*"
+        "step": "0.0.x"
     },
     "repository": { "type":  "git",
                     "url":   "http://github.com/evanp/databank.git" }
