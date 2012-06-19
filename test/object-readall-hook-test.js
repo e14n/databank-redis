@@ -66,7 +66,7 @@ var objectReadallHookContext = function(driver, params) {
                         var i;
 
                         for (i = 0; i < people.length; i++) {
-                            people.del(function(err) {});
+                            people[i].del(function(err) {});
                         }
                     },
                     'it works': function(err, people) {
