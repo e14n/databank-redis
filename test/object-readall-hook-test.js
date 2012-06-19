@@ -110,7 +110,11 @@ var objectReadallHookContext = function(driver, params) {
                             assert.equal(called.after, nicknames.length);
                         },
                         'and the after hook modification happened': function(err, called) {
-                            assert.equal(called.person.addedByAfter, 23);
+                            var nick;
+                            for (nick in called.people) {
+                                assert.isObject(called.people[nick]);
+                                assert.equal(called.people[nick].addedByAfter, 23);
+                            }
                         }
                     }
                 }
