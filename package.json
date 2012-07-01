@@ -1,7 +1,7 @@
 {
     "name": "databank",
     "version": "0.12.0",
-    "engines": { "node": "~0.6.x" },
+    "engines": { "node": ">=0.6.x" },
     "author": "Evan Prodromou <evan@status.net>",
     "scripts": {"test": "vows test/*-test.js"},
     "main": "./lib/index.js",
