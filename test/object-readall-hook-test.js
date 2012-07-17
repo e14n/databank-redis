@@ -1,4 +1,4 @@
-// Testing DatabankObject basic functionality
+// Testing DatabankObject readAll() hooks
 
 var assert = require('assert'),
     vows = require('vows'),
