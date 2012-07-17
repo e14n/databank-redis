@@ -2,7 +2,7 @@ exports.driverParams = {
     'memory': {
     },
     'disk': {
-        dir: '/tmp/diskdatabank/'
+        mktmp: true
     },
     'redis': {
     },
@@ -17,6 +17,6 @@ exports.driverParams = {
     },
     'caching': {
 	'cache': {driver: 'memory', params: {}},
-	'source': {driver: 'disk', params: {dir: '/tmp/cachingdisk/'}}
+	'source': {driver: 'disk', params: {mktmp: true}}
     }
 };
