@@ -125,7 +125,7 @@ var objectReadallHookContext = function(driver, params) {
     return context;
 };
 
-var suite = vows.describe('object class'),
+var suite = vows.describe('object readall hooks'),
     driver = null;
 
 for (driver in driverParams) {
