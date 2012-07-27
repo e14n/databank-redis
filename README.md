@@ -31,6 +31,8 @@ To create a Redis databank, use the `Databank.get()` method:
 
 The driver takes the following parameters:
 
+* `host`: the host to connect to; default is `127.0.0.1`.
+* `port`: the port to connect to; default is `6379`.
 * `schema`: the database schema, as described in the Databank README.
 
 See the main databank package for info on its interface.
