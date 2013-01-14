@@ -8,11 +8,11 @@
     "directories": {"lib": "./lib/"},
     "description": "Redis driver for Databank",
     "dependencies": {
-        "redis": "0.6.x", 
-        "databank": "0.14.x"
+        "redis": "0.8.x", 
+        "databank": "0.15.x"
     },
     "devDependencies": {
-        "vows": "0.6.x" 
+        "vows": "0.7.x" 
     },
     "licenses": [
         {
