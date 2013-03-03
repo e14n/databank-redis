@@ -6,7 +6,7 @@ This is the Redis driver for Databank.
 License
 -------
 
-Copyright 2012, StatusNet Inc.
+Copyright 2011-2013, E14N https://e14n.com/
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ The driver takes the following parameters:
 * `host`: the host to connect to; default is `127.0.0.1`.
 * `port`: the port to connect to; default is `6379`.
 * `schema`: the database schema, as described in the Databank README.
+* `database`: integer representing the Redis database to use; default is 0.
 
 See the main databank package for info on its interface.
 
@@ -43,9 +44,8 @@ Under the covers
 Keys in the database have the form "type:id". So a "person" with id
 "evanp" is at "person:evanp".
 
-Objects and arrays are stored as JSON-encoded strings in the LevelDB
+Objects and arrays are stored as JSON-encoded strings in the Redis
 database. Numbers are stored as numbers.
 
 Indices are implemented as sets. Search uses set intersection to
 quickly find keys to matching objects.
-
