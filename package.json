@@ -9,7 +9,7 @@
     "description": "Redis driver for Databank",
     "dependencies": {
         "redis": "0.8.x", 
-        "databank": "0.18.x",
+        "databank": "~0.18.2",
         "async": "0.1.x",
         "underscore": "1.4.x"
     },
