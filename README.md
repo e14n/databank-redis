@@ -35,6 +35,11 @@ The driver takes the following parameters:
 * `port`: the port to connect to; default is `6379`.
 * `schema`: the database schema, as described in the Databank README.
 * `database`: integer representing the Redis database to use; default is 0.
+* `checkIndices`: at connect time the driver will check that the non-primary 
+  indices (see below) in the database are up-to-date with the values in the
+  schema parameter. If not, it tries to build them. This can take a loooong
+  time in a big database, so if you want to make it stop, set this
+  parameter to `false`. Default is `true`.
 
 See the main databank package for info on its interface.
 
