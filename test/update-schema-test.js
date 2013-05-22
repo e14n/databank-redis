@@ -93,11 +93,17 @@ suite.addBatch({
             assert.ifError(err);
             assert.isObject(bank);
         },
+        teardown: function(bank) {
+            var ignore = function(err) {};
+            if (bank && bank.disconnect) {
+                bank.disconnect(ignore);
+            }
+        },
         "and we store our data": {
             topic: function(bank) {
                 var callback = this.callback,
                     saveProvince = function(province, callback) {
-                        bank.save("province", province.code, province, function(err, type) {
+                        bank.create("province", province.code, province, function(err, type) {
                             callback(err);
                         });
                     };
@@ -125,62 +131,53 @@ suite.addBatch({
                     assert.lengthOf(results, 1);
                     assert.equal(results[0].code, "ON");
                 },
-                "and we close the bank": {
-                    topic: function(results, bank) {
-                        var callback = this.callback;
-                        bank.disconnect(callback);
-                    },
-                    "it works": function(err) {
-                        assert.ifError(err);
-                    },
-                    "and we create a new bank with a different schema": {
-                        topic: function() {
-                            var callback = this.callback,
-                                schema = {
-                                    province: {
-                                        pkey: "code",
-                                        fields: ["name", "capital"],
-                                        indices: ["name"]
-                                    }
-                                },
-                                bank = Databank.get("redis", {schema: schema});
-                            
-                            bank.connect({}, function(err) {
-                                if (err) {
-                                    callback(err, null);
-                                } else {
-                                    callback(null, bank);
+                "and we create a new bank with a different schema": {
+                    topic: function() {
+                        var callback = this.callback,
+                            schema = {
+                                province: {
+                                    pkey: "code",
+                                    fields: ["name", "capital"],
+                                    indices: ["name"]
                                 }
+                            },
+                            bank = Databank.get("redis", {schema: schema});
+                        
+                        bank.connect({}, function(err) {
+                            if (err) {
+                                callback(err, null);
+                            } else {
+                                callback(null, bank);
+                            }
+                        });
+                    },
+                    "it works": function(err, bank) {
+                        assert.ifError(err);
+                        assert.isObject(bank);
+                    },
+                    teardown: function(bank) {
+                        var ignore = function(err) {};
+                        if (bank && bank.disconnect) {
+                            bank.disconnect(ignore);
+                        }
+                    },
+                    "and we search on a newly-indexed property": {
+                        topic: function(bank) {
+                            var callback = this.callback,
+                                results = [],
+                                onResult = function(result) {
+                                    results.push(result);
+                                };
+
+                            bank.search("province", {name: "Quebec"}, onResult, function(err) {
+                                callback(err, results);
                             });
                         },
-                        "it works": function(err, bank) {
+                        "it works": function(err, results) {
                             assert.ifError(err);
-                            assert.isObject(bank);
-                        },
-                        teardown: function(bank) {
-                            var ignore = function(err) {};
-                            if (bank && bank.disconnect) {
-                                bank.disconnect(ignore);
-                            }
-                        },
-                        "and we search on a newly-indexed property": {
-                            topic: function(bank) {
-                                var callback = this.callback,
-                                    results = [],
-                                    onResult = function(result) {
-                                        results.push(result);
-                                    };
-
-                                bank.search("province", {name: "Quebec"}, onResult, function(err) {
-                                    callback(err, results);
-                                });
-                            },
-                            "it works": function(err, results) {
-                                assert.ifError(err);
-                                assert.isArray(results);
-                                assert.lengthOf(results, 1);
-                                assert.equal(results[0].code, "QC");
-                            }
+                            assert.isArray(results);
+                            assert.lengthOf(results, 1);
+                            assert.equal(results[0].code, "QC");
                         }
                     }
                 }
