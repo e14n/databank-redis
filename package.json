@@ -1,6 +1,6 @@
 {
     "name": "databank-redis",
-    "version": "0.19.0",
+    "version": "0.19.1",
     "engines": { "node": ">=0.6.x" },
     "author": "Evan Prodromou <evan@e14n.com>",
     "scripts": {"test": "vows test/*-test.js"},
