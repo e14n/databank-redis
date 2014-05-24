@@ -6,7 +6,7 @@ This is the Redis driver for Databank.
 License
 -------
 
-Copyright 2011-2013, E14N https://e14n.com/
+Copyright 2011-2014, E14N https://e14n.com/
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ Usage
 To create a Redis databank, use the `Databank.get()` method:
 
     var Databank = require('databank').Databank;
-    
+
     var db = Databank.get('redis', {});
 
 The driver takes the following parameters:
@@ -35,7 +35,7 @@ The driver takes the following parameters:
 * `port`: the port to connect to; default is `6379`.
 * `schema`: the database schema, as described in the Databank README.
 * `database`: integer representing the Redis database to use; default is 0.
-* `checkIndices`: at connect time the driver will check that the non-primary 
+* `checkIndices`: at connect time the driver will check that the non-primary
   indices (see below) in the database are up-to-date with the values in the
   schema parameter. If not, it tries to build them. This can take a loooong
   time in a big database, so if you want to make it stop, set this
